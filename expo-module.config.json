@@ -1,0 +1,9 @@
+{
+  "platforms": ["ios", "tvos", "android", "web"],
+  "ios": {
+    "modules": ["ExpoBrotherPrinterSdkModule"]
+  },
+  "android": {
+    "modules": ["com.vpass.brotherprintersdk.ExpoBrotherPrinterSdkModule"]
+  }
+}
