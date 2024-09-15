@@ -23,4 +23,8 @@ export function addChangeListener(listener: (event: ChangeEventPayload) => void)
   return emitter.addListener<ChangeEventPayload>('onChange', listener);
 }
 
+export async function startBluetoothSearch() {
+  return await ExpoBrotherPrinterSdkModule.startBluetoothSearch();
+}
+
 export { ExpoBrotherPrinterSdkView, ExpoBrotherPrinterSdkViewProps, ChangeEventPayload };

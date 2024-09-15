@@ -1,4 +1,5 @@
 import ExpoModulesCore
+import BRLMPrinterKit
 
 public class ExpoBrotherPrinterSdkModule: Module {
   // Each module class must implement the definition function. The definition consists of components
@@ -31,6 +32,22 @@ public class ExpoBrotherPrinterSdkModule: Module {
         "value": value
       ])
     }
+      
+      AsyncFunction("startBluetoothSearch") {
+          NSLog("Func: Start bluetooth search")
+          
+          // search for printer
+          let searcher = BRLMPrinterSearcher.startBluetoothSearch()
+          searcher.channels.forEach { channel in
+              let modelName = channel.extraInfo?.value(forKey: BRLMChannelExtraInfoKeyModelName) as? String ?? ""
+              let serialNum = channel.extraInfo?.value(forKey: BRLMChannelExtraInfoKeySerialNumber) as? String ?? ""
+              
+              NSLog("Printer: \(modelName) (\(serialNum)")
+              NSLog("  Desc    - \(channel.description)")
+              NSLog("  Info    - \(channel.channelInfo)")
+              NSLog("  Ex Info - \(channel.extraInfo ?? [:])")
+          }
+      }
 
     // Enables the module to be used as a native view. Definition components that are accepted as part of the
     // view definition: Prop, Events.

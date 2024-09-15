@@ -16,6 +16,9 @@ Pod::Spec.new do |s|
   s.static_framework = true
 
   s.dependency 'ExpoModulesCore'
+  s.vendored_frameworks = 'Frameworks/BRLMPrinterKit.xcframework'
+  # s.exclude_files = 'Frameworks/BRLMPrinterKit.xcframework/ios-arm64_x86_64-simulator/**/*.h'
+  s.exclude_files = 'Frameworks/BRLMPrinterKit.xcframework/**/*.h'
 
   # Swift/Objective-C compatibility
   s.pod_target_xcconfig = {

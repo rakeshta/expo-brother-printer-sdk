@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import * as ExpoBrotherPrinterSdk from 'expo-brother-printer-sdk';
 
@@ -6,6 +6,9 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text>{ExpoBrotherPrinterSdk.hello()}</Text>
+      <TouchableOpacity style={styles.actionButton} onPress={() => ExpoBrotherPrinterSdk.startBluetoothSearch()}>
+        <Text>Start Bluetooth Search</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -16,5 +19,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  actionButton: {
+    padding: 12,
+    marginTop: 16,
+    borderRadius: 6,
+    backgroundColor: '#ccccff',
   },
 });
