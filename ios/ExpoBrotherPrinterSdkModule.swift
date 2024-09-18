@@ -2,62 +2,29 @@ import ExpoModulesCore
 import BRLMPrinterKit
 
 public class ExpoBrotherPrinterSdkModule: Module {
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
-  public func definition() -> ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('ExpoBrotherPrinterSdk')` in JavaScript.
-    Name("ExpoBrotherPrinterSdk")
-
-    // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
-    Constants([
-      "PI": Double.pi
-    ])
-
-    // Defines event names that the module can send to JavaScript.
-    Events("onChange")
-
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      return "Hello there! 👋"
+    
+    // Each module class must implement the definition function. The definition consists of components
+    // that describes the module's functionality and behavior.
+    // See https://docs.expo.dev/modules/module-api for more details about available components.
+    public func definition() -> ModuleDefinition {
+        
+        /// Name of the module visible from JavaScript
+        Name("ExpoBrotherPrinterSdk")
+        
+        ///  Search for Bluetooth classic printers
+        AsyncFunction("searchBluetoothPrinters") {
+            let searcher = BRLMPrinterSearcher.startBluetoothSearch()
+            return searcher.channels.map { channel in
+                return [
+                    "type": BRLMChannelType.bluetoothMFi.rawValue,
+                    "address": channel.channelInfo,
+                    "modelName": channel.extraInfo?[BRLMChannelExtraInfoKeyModelName] ?? "Unknown",
+                    "serialNumber": channel.extraInfo?[BRLMChannelExtraInfoKeySerialNumber] ?? "Unknown",
+                    "macAddress": channel.extraInfo?[BRLMChannelExtraInfoKeyMacAddress] as Any,
+                    "nodeName": channel.extraInfo?[BRLMChannelExtraInfoKeyNodeName] as Any,
+                    "location": channel.extraInfo?[BRLMChannelExtraInfoKeyLocation] as Any
+                ]
+            }
+        }
     }
-
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { (value: String) in
-      // Send an event to JavaScript.
-      self.sendEvent("onChange", [
-        "value": value
-      ])
-    }
-      
-      AsyncFunction("startBluetoothSearch") {
-          NSLog("Func: Start bluetooth search")
-          
-          // search for printer
-          let searcher = BRLMPrinterSearcher.startBluetoothSearch()
-          searcher.channels.forEach { channel in
-              let modelName = channel.extraInfo?.value(forKey: BRLMChannelExtraInfoKeyModelName) as? String ?? ""
-              let serialNum = channel.extraInfo?.value(forKey: BRLMChannelExtraInfoKeySerialNumber) as? String ?? ""
-              
-              NSLog("Printer: \(modelName) (\(serialNum)")
-              NSLog("  Desc    - \(channel.description)")
-              NSLog("  Info    - \(channel.channelInfo)")
-              NSLog("  Ex Info - \(channel.extraInfo ?? [:])")
-          }
-          
-          NSLog("END Func: Start bluetooth search")
-      }
-
-    // Enables the module to be used as a native view. Definition components that are accepted as part of the
-    // view definition: Prop, Events.
-    View(ExpoBrotherPrinterSdkView.self) {
-      // Defines a setter for the `name` prop.
-      Prop("name") { (view: ExpoBrotherPrinterSdkView, prop: String) in
-        print(prop)
-      }
-    }
-  }
 }

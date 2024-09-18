@@ -1,12 +1,17 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import * as ExpoBrotherPrinterSdk from 'expo-brother-printer-sdk';
+import { BrotherPrinterSDK } from 'expo-brother-printer-sdk';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>{ExpoBrotherPrinterSdk.hello()}</Text>
-      <TouchableOpacity style={styles.actionButton} onPress={() => ExpoBrotherPrinterSdk.startBluetoothSearch()}>
+      <TouchableOpacity
+        style={styles.actionButton}
+        onPress={async () => {
+          const channels = await BrotherPrinterSDK.searchBluetoothPrinters();
+          console.log('--debug channels:', channels);
+        }}
+      >
         <Text>Start Bluetooth Search</Text>
       </TouchableOpacity>
     </View>
