@@ -47,6 +47,8 @@ public class ExpoBrotherPrinterSdkModule: Module {
               NSLog("  Info    - \(channel.channelInfo)")
               NSLog("  Ex Info - \(channel.extraInfo ?? [:])")
           }
+          
+          NSLog("END Func: Start bluetooth search")
       }
 
     // Enables the module to be used as a native view. Definition components that are accepted as part of the

@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "expo-brother-printer-sdk-example",
+    "name": "Brother Printer SDK Example",
     "slug": "expo-brother-printer-sdk-example",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -13,7 +13,20 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.vpass.brotherprintersdk.example"
+      "bundleIdentifier": "com.vpass.brotherprintersdk.example",
+      "infoPlist": {
+        "NSBluetoothPeripheralUsageDescription": "This app requires Bluetooth access to print to Brother printers.",
+        "NSBluetoothAlwaysUsageDescription": "This app requires Bluetooth access to print to Brother printers.",
+        "NSLocalNetworkUsageDescription": "This app requires local network access to print to Brother printers using WiFi.",
+        "UISupportedExternalAccessoryProtocols": [
+          "com.brother.ptcbp"
+        ],
+        "NSBonjourServices": [
+          "_ipp._tcp",
+          "_pdl-datastream._tcp",
+          "_printer._tcp"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {

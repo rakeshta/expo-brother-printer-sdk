@@ -44,7 +44,7 @@ if (getRNMinorVersion() >= 75) {
   }
 }
 
-rootProject.name = 'expo-brother-printer-sdk-example'
+rootProject.name = 'Brother Printer SDK Example'
 
 dependencyResolutionManagement {
   versionCatalogs {
