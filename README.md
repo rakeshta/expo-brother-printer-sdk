@@ -2,10 +2,11 @@
 
 Expo module to connect to Brother printers
 
-# API documentation
+<!-- # API documentation
 
 - [Documentation for the main branch](https://github.com/expo/expo/blob/main/docs/pages/versions/unversioned/sdk/brother-printer-sdk.md)
 - [Documentation for the latest stable release](https://docs.expo.dev/versions/latest/sdk/brother-printer-sdk/)
+ -->
 
 # Installation in managed Expo projects
 
@@ -23,7 +24,36 @@ npm install expo-brother-printer-sdk
 
 ### Configure for iOS
 
-Run `npx pod-install` after installing the npm package.
+1. After installing the package, run `npx pod-install` to install dependencies & create the Xcode project.
+2. Add the following entries to your expo `app.json` file:
+   ```json
+   {
+    "expo": {
+      ...
+      "ios": {
+        ...
+        "infoPlist": {
+          ...
+          "NSLocalNetworkUsageDescription": "This app requires local network access to print to Brother printers using WiFi.",
+          "NSBluetoothPeripheralUsageDescription": "This app requires Bluetooth access to print to Brother printers.",
+          "NSBluetoothAlwaysUsageDescription": "This app requires Bluetooth access to print to Brother printers.",
+          "UISupportedExternalAccessoryProtocols": [
+             "com.brother.ptcbp"
+          ],
+          "NSBonjourServices": [
+            "_ipp._tcp",
+            "_pdl-datastream._tcp",
+            "_printer._tcp"
+          ],
+          ...
+        },
+        ...
+      }
+      ...
+    }
+   }
+   ```
+3. Run `npx expo prebuild` to update the app configuration.
 
 
 ### Configure for Android
