@@ -1,8 +1,12 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { BrotherPrinterSDK } from 'expo-brother-printer-sdk';
 
+const sampleImage = require('./assets/Sample-Image.png');
+
 export default function App() {
+  console.log('--debug sample image', Image.resolveAssetSource(sampleImage));
+
   return (
     <View style={styles.container}>
       <TouchableOpacity

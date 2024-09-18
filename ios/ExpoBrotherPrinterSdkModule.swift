@@ -1,6 +1,7 @@
 import ExpoModulesCore
 import BRLMPrinterKit
 
+
 public class ExpoBrotherPrinterSdkModule: Module {
     
     // Each module class must implement the definition function. The definition consists of components
@@ -11,7 +12,7 @@ public class ExpoBrotherPrinterSdkModule: Module {
         /// Name of the module visible from JavaScript
         Name("ExpoBrotherPrinterSdk")
         
-        ///  Search for Bluetooth classic printers
+        /// Search for Bluetooth classic printers
         AsyncFunction("searchBluetoothPrinters") {
             let searcher = BRLMPrinterSearcher.startBluetoothSearch()
             return searcher.channels.map { channel in
@@ -25,6 +26,13 @@ public class ExpoBrotherPrinterSdkModule: Module {
                     "location": channel.extraInfo?[BRLMChannelExtraInfoKeyLocation] as Any
                 ]
             }
+        }
+        
+        /// Print image with URL
+        AsyncFunction("printImageWithURL") { (url: String, channelDict: [String: Any], settingsDict: [String: Any]) in
+            
+            let channel = try ChannelUtils.channelFromDictionary(channelDict)
+            
         }
     }
 }
