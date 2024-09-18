@@ -28,8 +28,8 @@
   "author": "Rakesh Ayyaswami <rakeshta@gmail.com> (https://github.com/rakeshta)",
   "license": "MIT",
   "homepage": "https://github.com/rakeshta/expo-brother-printer-sdk#readme",
-  "dependencies": {},
   "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/react": "^18.0.25",
     "expo-module-scripts": "^3.5.2",
     "expo-modules-core": "^1.12.20"
