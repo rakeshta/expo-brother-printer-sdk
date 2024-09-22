@@ -4,12 +4,13 @@
 //
 //  Created by Rakesh Ayyaswami on 19/9/2024.
 //
+
 import BRLMPrinterKit
 
 
-class ChannelUtils {
+internal class ChannelUtils {
     
-    static func channelFromDictionary(_ dictionary: [String: Any]) throws -> BRLMChannel {
+    internal static func channelFromDictionary(_ dictionary: [String: Any]) throws -> BRLMChannel {
         
         // parse type
         guard
