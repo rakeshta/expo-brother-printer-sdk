@@ -37,17 +37,13 @@ internal class SettingsUtils {
         return settings
     }
     
-    internal static func settingsFromDictionary(_ settings: [String: Any], channel: BRLMChannel) throws  -> BRLMPrintSettingsProtocol {
-        
-        // extract model name
-        guard let modelName = channel.extraInfo?[BRLMChannelExtraInfoKeyModelName] as? String else {
-            throw GenericError(description: "Printer channel does not have a model name")
-        }
+    internal static func settingsFromDictionary(_ settings: [String: Any], modelName: String) throws  -> BRLMPrintSettingsProtocol {
 
+        // decode supported model from name
         let model  = try _printerModelFromName(modelName)
-        let reader = DictionaryReadWrite(settings)
 
         // parse settings based on model
+        let reader = DictionaryReadWrite(settings)
         if  modelName.hasPrefix("QL") {
             return try _parseSettings_QLSeries(reader, model: model)
         }

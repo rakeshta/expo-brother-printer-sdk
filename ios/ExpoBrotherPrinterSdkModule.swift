@@ -29,10 +29,51 @@ public class ExpoBrotherPrinterSdkModule: Module {
         }
         
         /// Print image with URL
-        AsyncFunction("printImageWithURL") { (url: String, channelDict: [String: Any], settingsDict: [String: Any]) in
+        AsyncFunction("printImageWithURL") { (urlString: String, channelDict: [String: Any], settingsDict: [String: Any]) in
             
+            // parse URL
+            guard let url = URL(string: urlString) else {
+                throw GenericError(description: "Invalid image URL")
+            }
+            
+            NSLog("DEBUG: printImageWithURL - \(url)")
+            
+            // re-construct chanel
             let channel = try ChannelUtils.channelFromDictionary(channelDict)
+            NSLog("-  Address: \(channel.channelInfo)")
             
+            // extract model name
+            // fallback to model name we got back from JS (for BLE printers, channels created from address do not have
+            // model info or other details.)
+            guard
+                let modelName = (channel.extraInfo?[BRLMChannelExtraInfoKeyModelName] ?? channelDict["modelName"]) as? String
+            else {
+                throw GenericError(description: "Model name could not be retrieved")
+            }
+            NSLog("-  Model Name: \(modelName)")
+
+            // parse settings
+            let settings = try SettingsUtils.settingsFromDictionary(settingsDict, modelName: modelName)
+            NSLog("-  Settings: \(settingsDict)")
+            
+            // connect to printer
+            let printerName   = "\(modelName) (\(channel.channelInfo))"
+            NSLog("Connecting to \(printerName)")
+            let driverResult = BRLMPrinterDriverGenerator.open(channel)
+            guard
+                driverResult.error.code == .noError,
+                let driver = driverResult.driver
+            else {
+                throw GenericError(description: "Connection failed - \(driverResult.error.code)")
+            }
+
+            // close connection before exit
+            defer {
+                driver.closeChannel()
+            }
+            
+            // print image
+            driver.printImage(with: url, settings: settings)
         }
     }
 }
