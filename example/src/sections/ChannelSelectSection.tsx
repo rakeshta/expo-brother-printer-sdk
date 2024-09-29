@@ -5,18 +5,27 @@ import { BPChannel, BrotherPrinterSDK } from 'expo-brother-printer-sdk';
 import { CheckIcon, Row, Section } from '../components';
 import { GS } from '../styles';
 
-export interface PrinterSelectSectionProps {
+export interface ChannelSelectSectionProps {
   selectedChannel?: BPChannel;
   onSelectChannel: (channel: BPChannel) => void;
 }
 
-export function PrinterSelectSection({ selectedChannel, onSelectChannel }: PrinterSelectSectionProps) {
+export function ChannelSelectSection({ selectedChannel, onSelectChannel }: ChannelSelectSectionProps) {
   // printer list
   const [channels, setChannels] = useState<BPChannel[]>([]);
 
   // search for printers on mount
   useEffect(() => {
-    BrotherPrinterSDK.searchBluetoothPrinters().then(setChannels);
+    (async () => {
+      // search & save channels
+      const channels = await BrotherPrinterSDK.searchBluetoothPrinters();
+      setChannels(channels);
+
+      // if no selected channel, select the first one
+      if (!selectedChannel && channels.length > 0) {
+        onSelectChannel(channels[0]);
+      }
+    })();
   }, []);
 
   // render

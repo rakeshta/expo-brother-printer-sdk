@@ -1,1 +1,1 @@
-export * from './PrinterSelectSection';
+export * from './ChannelSelectSection';

@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BPChannel } from 'expo-brother-printer-sdk';
 
-import { PrinterSelectSection } from './sections';
+import { ChannelSelectSection } from './sections';
 import { GS } from './styles';
 
 export function HomeScreen() {
@@ -24,7 +24,7 @@ export function HomeScreen() {
         contentInset={{ bottom: safeAreaInsets.bottom }}
         scrollIndicatorInsets={{ bottom: safeAreaInsets.bottom }}
       >
-        <PrinterSelectSection selectedChannel={channel} onSelectChannel={setChannel} />
+        <ChannelSelectSection selectedChannel={channel} onSelectChannel={setChannel} />
       </ScrollView>
     </View>
   );
