@@ -40,6 +40,9 @@ export function ChannelSelectSection({ style, selectedChannel, onSelectChannel }
   // render
   return (
     <Section style={style} contentStyle={GS.m_0} title='Select Printer'>
+      {channels.length === 0 && (
+        <Row text='No printers found' subText='Connect to a printer via Bluetooth settings, then restart the app.' />
+      )}
       {channels.map((channel) => (
         <Row
           key={channel.address}

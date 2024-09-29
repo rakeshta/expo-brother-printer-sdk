@@ -14,9 +14,9 @@ export function Row({ style, text, subText, accessory, onPress }: RowProps) {
   // contents
   const contents = (
     <View style={[styles.root, GS.flexRow, GS.itemsCenter, GS.px_md, style]}>
-      <View style={GS.flex1}>
+      <View style={[GS.flex1, GS.py_md]}>
         <Text style={styles.text}>{text}</Text>
-        {subText && <Text style={styles.subText}>{subText}</Text>}
+        {subText && <Text style={[styles.subText, GS.mt_xs]}>{subText}</Text>}
       </View>
       {accessory && <View style={GS.ml_lg}>{accessory}</View>}
     </View>
