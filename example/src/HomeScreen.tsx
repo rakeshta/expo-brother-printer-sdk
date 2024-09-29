@@ -1,16 +1,33 @@
 import { useState } from 'react';
 
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Image, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { BPChannel } from 'expo-brother-printer-sdk';
+import { BPChannel, BPPrintSettings, BPQLLabelSize, BrotherPrinterSDK } from 'expo-brother-printer-sdk';
 
-import { ChannelSelectSection } from './sections';
+import { Button } from './components';
+import { ChannelSelectSection, PrintSettingsSection } from './sections';
 import { GS } from './styles';
+
+const sampleImage = require('../assets/Sample-Image.png');
 
 export function HomeScreen() {
   // state
   const [channel, setChannel] = useState<BPChannel>();
+  const [settings, setSettings] = useState<BPPrintSettings>({
+    labelSize: BPQLLabelSize.RollW62,
+    autoCut: true,
+  });
+
+  // print callback
+  const onPrint = async () => {
+    // abort if printer not selected
+    if (!channel) return;
+
+    // send print job
+    const imageUri = Image.resolveAssetSource(sampleImage).uri;
+    await BrotherPrinterSDK.printImage(imageUri, channel, settings);
+  };
 
   // safe areas
   const safeAreaInsets = useSafeAreaInsets();
@@ -18,26 +35,43 @@ export function HomeScreen() {
   // render
   return (
     <View style={styles.root}>
-      <View style={[styles.titleBar, { height: safeAreaInsets.top }]} />
+      {/* header */}
+      <View style={[styles.header, { height: safeAreaInsets.top }]} />
+
+      {/* scroll area */}
       <ScrollView
-        contentContainerStyle={[GS.p_sm]}
+        contentContainerStyle={[GS.px_sm, GS.py_md]}
         contentInset={{ bottom: safeAreaInsets.bottom }}
         scrollIndicatorInsets={{ bottom: safeAreaInsets.bottom }}
       >
-        <ChannelSelectSection selectedChannel={channel} onSelectChannel={setChannel} />
+        <ChannelSelectSection style={GS.mb_md} selectedChannel={channel} onSelectChannel={setChannel} />
+        <PrintSettingsSection />
       </ScrollView>
+
+      {/* footer */}
+      <View style={styles.footer}>
+        <View style={[GS.px_lg, GS.py_md]}>
+          <Button title='Print' disabled={!channel} onPress={onPrint} />
+        </View>
+        <View style={{ height: safeAreaInsets.bottom }} />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleBar: {
+  root: {
+    flex: 1,
+    backgroundColor: '#f0f0f0',
+  },
+  header: {
     backgroundColor: '#fff',
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderColor: '#ccc',
   },
-  root: {
-    flex: 1,
-    backgroundColor: '#f0f0f0',
+  footer: {
+    backgroundColor: '#fff',
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderColor: '#ccc',
   },
 });

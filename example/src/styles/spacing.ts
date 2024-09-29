@@ -36,6 +36,18 @@ export const spacing = StyleSheet.create({
   mr_md: { marginRight: MD },
   mr_lg: { marginRight: LG },
 
+  mt_0: { marginTop: 0 },
+  mt_xs: { marginTop: XS },
+  mt_sm: { marginTop: SM },
+  mt_md: { marginTop: MD },
+  mt_lg: { marginTop: LG },
+
+  mb_0: { marginBottom: 0 },
+  mb_xs: { marginBottom: XS },
+  mb_sm: { marginBottom: SM },
+  mb_md: { marginBottom: MD },
+  mb_lg: { marginBottom: LG },
+
   p_0: { padding: 0 },
   p_xs: { padding: XS },
   p_sm: { padding: SM },
@@ -53,4 +65,16 @@ export const spacing = StyleSheet.create({
   py_sm: { paddingVertical: SM },
   py_md: { paddingVertical: MD },
   py_lg: { paddingVertical: LG },
+
+  pt_0: { paddingTop: 0 },
+  pt_xs: { paddingTop: XS },
+  pt_sm: { paddingTop: SM },
+  pt_md: { paddingTop: MD },
+  pt_lg: { paddingTop: LG },
+
+  pb_0: { paddingBottom: 0 },
+  pb_xs: { paddingBottom: XS },
+  pb_sm: { paddingBottom: SM },
+  pb_md: { paddingBottom: MD },
+  pb_lg: { paddingBottom: LG },
 });
