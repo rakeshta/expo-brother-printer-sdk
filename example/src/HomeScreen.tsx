@@ -1,15 +1,14 @@
 import { useState } from 'react';
 
-import { Image, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BPChannel, BPPrintSettings, BPQLLabelSize, BrotherPrinterSDK } from 'expo-brother-printer-sdk';
 
 import { Button } from './components';
-import { ChannelSelectSection, PrintSettingsSection } from './sections';
+import { ChannelSelectSection, PreviewSection, PrintSettingsSection } from './sections';
+import { MediaService } from './services';
 import { GS } from './styles';
-
-const sampleImage = require('../assets/Sample-Image.png');
 
 export function HomeScreen() {
   // state
@@ -25,7 +24,7 @@ export function HomeScreen() {
     if (!channel) return;
 
     // send print job
-    const imageUri = Image.resolveAssetSource(sampleImage).uri;
+    const imageUri = await MediaService.sampleImageUrl();
     await BrotherPrinterSDK.printImage(imageUri, channel, settings);
   };
 
@@ -39,13 +38,10 @@ export function HomeScreen() {
       <View style={[styles.header, { height: safeAreaInsets.top }]} />
 
       {/* scroll area */}
-      <ScrollView
-        contentContainerStyle={[GS.px_sm, GS.py_md]}
-        contentInset={{ bottom: safeAreaInsets.bottom }}
-        scrollIndicatorInsets={{ bottom: safeAreaInsets.bottom }}
-      >
+      <ScrollView contentContainerStyle={[GS.px_sm, GS.py_md]}>
         <ChannelSelectSection style={GS.mb_md} selectedChannel={channel} onSelectChannel={setChannel} />
-        <PrintSettingsSection />
+        <PrintSettingsSection style={GS.mb_md} />
+        <PreviewSection style={GS.mb_md} />
       </ScrollView>
 
       {/* footer */}
