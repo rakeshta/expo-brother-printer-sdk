@@ -1,7 +1,10 @@
 import { useState } from 'react';
 
 import { ScrollView, StyleSheet, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 import { BPChannel, BPPrintSettings, BPQLLabelSize, BrotherPrinterSDK } from 'expo-brother-printer-sdk';
 
@@ -33,25 +36,27 @@ export function HomeScreen() {
 
   // render
   return (
-    <View style={styles.root}>
-      {/* header */}
-      <View style={[styles.header, { height: safeAreaInsets.top }]} />
+    <GestureHandlerRootView style={styles.root}>
+      <BottomSheetModalProvider>
+        {/* header */}
+        <View style={[styles.header, { height: safeAreaInsets.top }]} />
 
-      {/* scroll area */}
-      <ScrollView contentContainerStyle={[GS.px_sm, GS.py_md]}>
-        <ChannelSelectSection style={GS.mb_md} selectedChannel={channel} onSelectChannel={setChannel} />
-        <PrintSettingsSection style={GS.mb_md} settings={settings} onChange={setSettings} />
-        <PreviewSection style={GS.mb_md} />
-      </ScrollView>
+        {/* scroll area */}
+        <ScrollView contentContainerStyle={[GS.px_sm, GS.py_md]}>
+          <ChannelSelectSection style={GS.mb_md} selectedChannel={channel} onSelectChannel={setChannel} />
+          <PrintSettingsSection style={GS.mb_md} settings={settings} onChange={setSettings} />
+          <PreviewSection style={GS.mb_md} />
+        </ScrollView>
 
-      {/* footer */}
-      <View style={styles.footer}>
-        <View style={[GS.px_lg, GS.py_md]}>
-          <Button title='Print' disabled={!channel} onPress={onPrint} />
+        {/* footer */}
+        <View style={styles.footer}>
+          <View style={[GS.px_lg, GS.py_md]}>
+            <Button title='Print' disabled={!channel} onPress={onPrint} />
+          </View>
+          <View style={{ height: safeAreaInsets.bottom }} />
         </View>
-        <View style={{ height: safeAreaInsets.bottom }} />
-      </View>
-    </View>
+      </BottomSheetModalProvider>
+    </GestureHandlerRootView>
   );
 }
 

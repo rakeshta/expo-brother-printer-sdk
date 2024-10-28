@@ -12,6 +12,7 @@ export const border = StyleSheet.create({
   rounded_lg: { borderRadius: ROUNDING_LG },
 
   border: { borderWidth: StyleSheet.hairlineWidth, borderColor: '#ccc' },
+  border_b: { borderBottomWidth: StyleSheet.hairlineWidth, borderColor: '#ccc' },
 
   border_debug1: { borderWidth: 1, borderColor: 'red' },
   border_debug2: { borderWidth: 1, borderColor: 'green' },
