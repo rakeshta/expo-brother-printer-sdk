@@ -3,3 +3,4 @@ export * from './CheckIcon';
 export * from './Divider';
 export * from './Row';
 export * from './Section';
+export * from './ToggleRow';

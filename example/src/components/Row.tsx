@@ -6,18 +6,20 @@ export interface RowProps {
   style?: StyleProp<ViewStyle>;
   text?: string;
   subText?: string;
+  detail?: string;
   accessory?: React.ReactNode;
   onPress?: () => void | Promise<void>;
 }
 
-export function Row({ style, text, subText, accessory, onPress }: RowProps) {
+export function Row({ style, text, subText, detail, accessory, onPress }: RowProps) {
   // contents
   const contents = (
     <View style={[styles.root, GS.flexRow, GS.itemsCenter, GS.px_md, style]}>
       <View style={[GS.flex1, GS.py_md]}>
-        <Text style={styles.text}>{text}</Text>
-        {subText && <Text style={[styles.subText, GS.mt_xs]}>{subText}</Text>}
+        <Text style={[GS.text_md]}>{text}</Text>
+        {subText && <Text style={[styles.subText, GS.text_sm, GS.mt_xs]}>{subText}</Text>}
       </View>
+      {detail && <Text style={[GS.text_md, GS.text_right, GS.font_bold, GS.ml_lg, GS.flex1]}>{detail}</Text>}
       {accessory && <View style={GS.ml_lg}>{accessory}</View>}
     </View>
   );
@@ -30,11 +32,7 @@ const styles = StyleSheet.create({
   root: {
     minHeight: 44,
   },
-  text: {
-    fontSize: 16,
-  },
   subText: {
-    fontSize: 13,
     color: '#666',
   },
 });

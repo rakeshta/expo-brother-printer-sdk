@@ -40,7 +40,7 @@ export function HomeScreen() {
       {/* scroll area */}
       <ScrollView contentContainerStyle={[GS.px_sm, GS.py_md]}>
         <ChannelSelectSection style={GS.mb_md} selectedChannel={channel} onSelectChannel={setChannel} />
-        <PrintSettingsSection style={GS.mb_md} />
+        <PrintSettingsSection style={GS.mb_md} settings={settings} onChange={setSettings} />
         <PreviewSection style={GS.mb_md} />
       </ScrollView>
 
