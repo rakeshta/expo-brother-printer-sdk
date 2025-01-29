@@ -14,6 +14,11 @@ export function sanitize(value: unknown): unknown {
     return undefined;
   }
 
+  // empty string - replace with `undefined`
+  if (value === '') {
+    return undefined;
+  }
+
   // array - recursively iterate over each element
   if (Array.isArray(value)) {
     return value.map(sanitize);

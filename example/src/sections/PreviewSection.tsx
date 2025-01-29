@@ -19,7 +19,6 @@ export function PreviewSection({ style }: PreviewSectionProps) {
     (async () => {
       const uri = await MediaService.sampleImageUrl();
       setImageUri(uri);
-      console.log('imageUri', uri);
     })();
   }, []);
 

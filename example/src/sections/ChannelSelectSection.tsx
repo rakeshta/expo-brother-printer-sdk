@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { StyleProp, ViewStyle } from 'react-native';
 
-import { BPChannel, BPChannelType, BrotherPrinterSDK } from 'expo-brother-printer-sdk';
+import { BPChannel, BPChannelType } from 'expo-brother-printer-sdk';
 
 import { CheckIcon, Row, Section } from '../components';
+import { useSearchPrinters } from '../hooks';
 import { GS } from '../styles';
 
 const ChannelDescription: Record<BPChannelType, string> = {
@@ -20,22 +21,16 @@ export interface ChannelSelectSectionProps {
 }
 
 export function ChannelSelectSection({ style, selectedChannel, onSelectChannel }: ChannelSelectSectionProps) {
-  // printer list
-  const [channels, setChannels] = useState<BPChannel[]>([]);
+  // search for printers
+  const { channels } = useSearchPrinters();
 
-  // search for printers on mount
+  // auto-select the first printer
   useEffect(() => {
-    (async () => {
-      // search & save channels
-      const channels = await BrotherPrinterSDK.searchBluetoothPrinters();
-      setChannels(channels);
-
-      // if no selected channel, select the first one
-      if (!selectedChannel && channels.length > 0) {
-        onSelectChannel(channels[0]);
-      }
-    })();
-  }, []);
+    if (!selectedChannel && channels.length > 0) {
+      onSelectChannel(channels[0]);
+    }
+    console.log('--debug channels', JSON.stringify(channels, null, 2));
+  }, [channels, onSelectChannel, selectedChannel]);
 
   // render
   return (
