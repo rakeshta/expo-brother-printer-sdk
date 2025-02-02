@@ -29,7 +29,6 @@ export function ChannelSelectSection({ style, selectedChannel, onSelectChannel }
     if (!selectedChannel && channels.length > 0) {
       onSelectChannel(channels[0]);
     }
-    console.log('--debug channels', JSON.stringify(channels, null, 2));
   }, [channels, onSelectChannel, selectedChannel]);
 
   // render
