@@ -13,20 +13,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.vpass.brotherprintersdk.example",
-      "infoPlist": {
-        "NSBluetoothPeripheralUsageDescription": "This app requires Bluetooth access to print to Brother printers.",
-        "NSBluetoothAlwaysUsageDescription": "This app requires Bluetooth access to print to Brother printers.",
-        "NSLocalNetworkUsageDescription": "This app requires local network access to print to Brother printers using WiFi.",
-        "UISupportedExternalAccessoryProtocols": [
-          "com.brother.ptcbp"
-        ],
-        "NSBonjourServices": [
-          "_ipp._tcp",
-          "_pdl-datastream._tcp",
-          "_printer._tcp"
-        ]
-      }
+      "bundleIdentifier": "com.vpass.brotherprintersdk.example"
     },
     "android": {
       "adaptiveIcon": {
@@ -37,6 +24,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "../app.plugin.js"
+    ]
   }
 }

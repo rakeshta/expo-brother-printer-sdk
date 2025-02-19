@@ -43,9 +43,9 @@
       <true/>
     </dict>
     <key>NSBluetoothAlwaysUsageDescription</key>
-    <string>This app requires Bluetooth access to print to Brother printers.</string>
+    <string>Allow $(PRODUCT_NAME) to connect to Brother printers using Bluetooth</string>
     <key>NSBluetoothPeripheralUsageDescription</key>
-    <string>This app requires Bluetooth access to print to Brother printers.</string>
+    <string>Allow $(PRODUCT_NAME) to connect to Brother printers using Bluetooth</string>
     <key>NSBonjourServices</key>
     <array>
       <string>_ipp._tcp</string>
@@ -53,7 +53,7 @@
       <string>_printer._tcp</string>
     </array>
     <key>NSLocalNetworkUsageDescription</key>
-    <string>This app requires local network access to print to Brother printers using WiFi.</string>
+    <string>Allow $(PRODUCT_NAME) to connect to Brother printers on your WiFi</string>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>
