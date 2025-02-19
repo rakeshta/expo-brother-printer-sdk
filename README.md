@@ -22,44 +22,21 @@ For bare React Native projects, you must ensure that you have [installed and con
 npm install expo-brother-printer-sdk
 ```
 
-### Configure for iOS
+### Native Configuration
 
-1. After installing the package, run `npx pod-install` to install dependencies & create the Xcode project.
-2. Add the following entries to your expo `app.json` file:
+1. Add the config plugin to `app.json` to add the necessary native configurations.
    ```json
    {
     "expo": {
       ...
-      "ios": {
-        ...
-        "infoPlist": {
-          ...
-          "NSLocalNetworkUsageDescription": "This app requires local network access to print to Brother printers using WiFi.",
-          "NSBluetoothPeripheralUsageDescription": "This app requires Bluetooth access to print to Brother printers.",
-          "NSBluetoothAlwaysUsageDescription": "This app requires Bluetooth access to print to Brother printers.",
-          "UISupportedExternalAccessoryProtocols": [
-             "com.brother.ptcbp"
-          ],
-          "NSBonjourServices": [
-            "_ipp._tcp",
-            "_pdl-datastream._tcp",
-            "_printer._tcp"
-          ],
-          ...
-        },
-        ...
-      }
-      ...
+      "plugins": [
+        ...,
+        "expo-brother-printer-sdk"
+      ],
     }
    }
    ```
-3. Run `npx expo prebuild` to update the app configuration.
-
-
-### Configure for Android
-
-TODO: Android support coming soon
-
+2. Run `npx expo prebuild --clean` to update the app configuration.
 
 ## Searching for printers
 
