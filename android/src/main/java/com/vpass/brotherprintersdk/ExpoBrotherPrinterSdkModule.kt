@@ -8,40 +8,28 @@ class ExpoBrotherPrinterSdkModule : Module() {
   // that describes the module's functionality and behavior.
   // See https://docs.expo.dev/modules/module-api for more details about available components.
   override fun definition() = ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('ExpoBrotherPrinterSdk')` in JavaScript.
+    /// Name of the module visible from JavaScript
     Name("ExpoBrotherPrinterSdk")
 
-    // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
-    Constants(
-      "PI" to Math.PI
-    )
-
-    // Defines event names that the module can send to JavaScript.
-    Events("onChange")
-
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      "Hello world! 👋"
+    /// Search for printers connected via Bluetooth classic
+    AsyncFunction("searchBluetoothPrinters") {
+      return@AsyncFunction listOf<Map<String, Any>>()
+    }
+    /// Search for printers connected via Bluetooth classic
+    AsyncFunction("searchBluetoothPrinters") {
+      return@AsyncFunction listOf<Map<String, Any>>()
+    }
+    /// Search for printers available on the same WiFi network
+    AsyncFunction("searchNetworkPrinters") { options: Map<String, Any> ->
+      return@AsyncFunction listOf<Map<String, Any>>()
     }
 
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { value: String ->
-      // Send an event to JavaScript.
-      sendEvent("onChange", mapOf(
-        "value" to value
-      ))
-    }
-
-    // Enables the module to be used as a native view. Definition components that are accepted as part of
-    // the view definition: Prop, Events.
-    View(ExpoBrotherPrinterSdkView::class) {
-      // Defines a setter for the `name` prop.
-      Prop("name") { view: ExpoBrotherPrinterSdkView, prop: String ->
-        println(prop)
-      }
+    /// Print image with URL
+    AsyncFunction("printImageWithURL") {
+            url: String,
+            channelsDict: Map<String, Any>,
+            settingsDict: Map<String, Any> ->
+      return@AsyncFunction true
     }
   }
 }
