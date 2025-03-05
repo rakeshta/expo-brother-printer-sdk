@@ -4,13 +4,12 @@ import { withAndroidConfig } from './withAndroidConfig';
 import { BPiOSConfig, withiOSConfig } from './withiOSConfig';
 
 const PackageName = 'expo-brother-printer-sdk';
-const PluginVersion = '1.0.0';
+const PluginVersion = '1.1.0';
 
 export type BPSDKConfig = BPiOSConfig;
 
 const withBrotherPrinterSDKConfig: ConfigPlugin<BPSDKConfig> = (config, props = {}) => {
   // warn about deprecated ios info plist keys
-
   if ('bluetoothPeripheralUsageDescription' in props) {
     WarningAggregator.addWarningIOS(
       'bluetoothPeripheralUsageDescription',
