@@ -1,5 +1,6 @@
 import { type ConfigPlugin, WarningAggregator, createRunOncePlugin } from '@expo/config-plugins';
 
+import { withAndroidConfig } from './withAndroidConfig';
 import { BPiOSConfig, withiOSConfig } from './withiOSConfig';
 
 const PackageName = 'expo-brother-printer-sdk';
@@ -19,6 +20,9 @@ const withBrotherPrinterSDKConfig: ConfigPlugin<BPSDKConfig> = (config, props = 
 
   // ios config
   config = withiOSConfig(config, props);
+
+  // android config
+  config = withAndroidConfig(config);
 
   return config;
 };
