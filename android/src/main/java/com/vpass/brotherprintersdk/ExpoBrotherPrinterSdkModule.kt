@@ -1,5 +1,9 @@
 package com.vpass.brotherprintersdk
 
+import android.util.Log
+import com.brother.sdk.lmprinter.Channel
+import com.brother.sdk.lmprinter.NetworkSearchOption
+import com.brother.sdk.lmprinter.PrinterSearcher
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
@@ -13,15 +17,48 @@ class ExpoBrotherPrinterSdkModule : Module() {
 
     /// Search for printers connected via Bluetooth classic
     AsyncFunction("searchBluetoothPrinters") {
-      return@AsyncFunction listOf<Map<String, Any>>()
+      Log.i("ExpoBrotherPrinterSdk", "Search using Bluetooth")
+
+      val channels = PrinterSearcher.startBluetoothSearch(appContext.reactContext).channels
+      return@AsyncFunction channels.map { channel ->
+        val extraInfo = channel.extraInfo
+        mapOf(
+          "type" to Channel.ChannelType.Bluetooth,
+          "address" to channel.getChannelInfo(),
+          "modelName" to (extraInfo[Channel.ExtraInfoKey.ModelName] ?: "Unknown"),
+          "serialNumber" to "Unknown",
+          "macAddress" to (extraInfo[Channel.ExtraInfoKey.MACAddress] ?: "Unknown"),
+          "nodeName" to (extraInfo[Channel.ExtraInfoKey.NodeName] ?: "Unknown"),
+          "location" to (extraInfo[Channel.ExtraInfoKey.Location] ?: "Unknown")
+        )
+      }
+
+      // return@AsyncFunction listOf<Map<String, Any>>()
     }
-    /// Search for printers connected via Bluetooth classic
-    AsyncFunction("searchBluetoothPrinters") {
-      return@AsyncFunction listOf<Map<String, Any>>()
-    }
+
     /// Search for printers available on the same WiFi network
     AsyncFunction("searchNetworkPrinters") { options: Map<String, Any> ->
-      return@AsyncFunction listOf<Map<String, Any>>()
+      Log.i("ExpoBrotherPrinterSdk", "Search using WiFi")
+
+      val option = NetworkSearchOption(15.toDouble(), false)
+
+      val channels = mutableListOf<Map<String, Any>>()
+      val result = PrinterSearcher.startNetworkSearch(appContext.reactContext, option) { channel ->
+      val extraInfo = channel.extraInfo
+      channels.add(
+        mapOf(
+          "type" to Channel.ChannelType.Wifi,
+          "address" to channel.getChannelInfo(),
+          "modelName" to (extraInfo[Channel.ExtraInfoKey.ModelName] ?: "Unknown"),
+          "serialNumber" to "Unknown",
+          "macAddress" to (extraInfo[Channel.ExtraInfoKey.MACAddress] ?: "Unknown"),
+          "nodeName" to (extraInfo[Channel.ExtraInfoKey.NodeName] ?: "Unknown"),
+          "location" to (extraInfo[Channel.ExtraInfoKey.Location] ?: "Unknown")
+        )
+      )
+    }
+
+      return@AsyncFunction channels
     }
 
     /// Print image with URL
@@ -29,6 +66,7 @@ class ExpoBrotherPrinterSdkModule : Module() {
             url: String,
             channelsDict: Map<String, Any>,
             settingsDict: Map<String, Any> ->
+      Log.i("ExpoBrotherPrinterSdk", "Print image with URL")
       return@AsyncFunction true
     }
   }

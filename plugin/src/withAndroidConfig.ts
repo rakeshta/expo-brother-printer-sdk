@@ -4,6 +4,8 @@ type ManifestUsesPermission = AndroidConfig.Manifest.ManifestUsesPermission;
 
 export const withAndroidConfig: ConfigPlugin = (config) => {
   return withAndroidManifest(config, async (config) => {
+    // TODO: Add xmlns:tools="http://schemas.android.com/tools" to manifest tag
+
     // ensure 'uses-permission' array exists
     if (!config.modResults.manifest['uses-permission']) {
       config.modResults.manifest['uses-permission'] = [];
