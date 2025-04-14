@@ -88,7 +88,7 @@ public class ExpoBrotherPrinterSdkModule: Module {
                 driverResult.error.code == .noError,
                 let driver = driverResult.driver
             else {
-                throw GenericError(description: "Connection failed - \(driverResult.error.code)")
+                throw GenericError(title: "Connection failed", description: driverResult.error.description())
             }
 
             // close connection before exit
@@ -98,7 +98,11 @@ public class ExpoBrotherPrinterSdkModule: Module {
 
             // print image
             NSLog("... Printing")
-            driver.printImage(with: url, settings: settings)
+            let error = driver.printImage(with: url, settings: settings)
+            if  error.code != BRLMPrintErrorCode.noError {
+                NSLog("Print failed - \(error)")
+                throw GenericError(title: "Print failed", description: "\(error.code) - \(error.description)")
+            }
         }
     }
 }

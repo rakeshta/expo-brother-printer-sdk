@@ -29,10 +29,11 @@ internal class SettingsUtils {
             throw GenericError(description: "Failed to initialize printer settings object")
         }
         
+        settings.labelSize               = reader.read("labelSize",               nvl: settings.labelSize) { BRLMQLPrintSettingsLabelSize(rawValue: $0) }
         settings.autoCutForEachPageCount = reader.read("autoCutForEachPageCount", nvl: 1)
         settings.autoCut                 = reader.read("autoCut",                 nvl: false)
         settings.cutAtEnd                = reader.read("cutAtEnd",                nvl: false)
-        settings.resolution              = reader.read("resolution",              nvl: .normal) { BRLMPrintSettingsResolution(rawValue: $0) }
+        settings.resolution              = reader.read("resolution",              nvl: .normal)            { BRLMPrintSettingsResolution(rawValue: $0) }
         
         return settings
     }

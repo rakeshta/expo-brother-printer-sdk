@@ -28,7 +28,11 @@ export function HomeScreen() {
 
     // send print job
     const imageUri = await MediaService.sampleImageUrl();
-    await BrotherPrinterSDK.printImage(imageUri, channel, settings);
+    try {
+      await BrotherPrinterSDK.printImage(imageUri, channel, settings);
+    } catch (error) {
+      console.error('Print error:', error);
+    }
   };
 
   // safe areas
