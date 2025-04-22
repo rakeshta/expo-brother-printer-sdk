@@ -35,6 +35,23 @@ export interface BPPrintSettings {
    * The print resolution. This may not be available for all printers.
    */
   resolution?: BPResolution;
+
+  /**
+   * The halftone method to use.
+   *
+   * @default `Threshold`.
+   */
+  halftone?: BPHalftone;
+
+  /**
+   * The threshold value to use when {@link halftone} is set to {@link BPHalftone.Threshold}.
+   *
+   * @remarks
+   * The value must be between `0` and `255`.
+   *
+   * @default 128
+   */
+  halftoneThreshold?: number;
 }
 
 /** Label sizes for QL series printers. */
@@ -81,4 +98,11 @@ export enum BPResolution {
   Low = 0,
   Normal = 1,
   High = 2,
+}
+
+/** A way to simulate grayscale using halftone. */
+export enum BPHalftone {
+  Threshold = 0,
+  ErrorDiffusion = 1,
+  PatternDither = 2,
 }

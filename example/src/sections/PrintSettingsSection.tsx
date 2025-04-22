@@ -5,7 +5,7 @@ import { StyleProp, ViewStyle } from 'react-native';
 import sortBy from 'lodash/sortBy';
 import startCase from 'lodash/startCase';
 
-import { BPPrintSettings, BPQLLabelSize, BPResolution } from 'expo-brother-printer-sdk';
+import { BPHalftone, BPPrintSettings, BPQLLabelSize, BPResolution } from 'expo-brother-printer-sdk';
 
 import { Row, Section, ToggleRow } from '../components';
 import { ModalSelect, ModalSelectMethods } from '../modals';
@@ -21,6 +21,11 @@ function labelSizeToString(labelSize: BPQLLabelSize | undefined) {
 function resolutionToString(resolution: BPResolution | undefined) {
   if (resolution === undefined) return 'Not Set';
   return startCase(BPResolution[resolution]);
+}
+
+function halftoneToString(halftone: BPHalftone | undefined) {
+  if (halftone === undefined) return 'Not Set';
+  return startCase(BPHalftone[halftone]);
 }
 
 // constants -----------------------------------------------------------------------------------------------------------
@@ -47,6 +52,24 @@ const resolutionItems = sortBy(
   'label',
 );
 
+const halftoneItems = sortBy(
+  Object.values(BPHalftone)
+    .filter((value) => typeof value !== 'string')
+    .map((value) => ({
+      key: `${value}`,
+      value,
+      label: halftoneToString(value),
+    })),
+  'label',
+);
+const halftoneThresholdItems = [
+  { key: '0', value: 0, label: '0' },
+  { key: '64', value: 64, label: '64' },
+  { key: '128', value: 128, label: '128' },
+  { key: '192', value: 192, label: '192' },
+  { key: '255', value: 255, label: '255' },
+];
+
 // component PrintSettingsSection --------------------------------------------------------------------------------------
 
 export interface PrintSettingsSectionProps {
@@ -59,6 +82,8 @@ export function PrintSettingsSection({ style, settings, onChange }: PrintSetting
   // modal refs
   const labelSizeModalRef = useRef<ModalSelectMethods>(null);
   const resolutionModalRef = useRef<ModalSelectMethods>(null);
+  const halftoneModalRef = useRef<ModalSelectMethods>(null);
+  const halftoneThresholdModalRef = useRef<ModalSelectMethods>(null);
 
   // helper to fire onChange event
   const fireOnChange = <Key extends keyof BPPrintSettings>(key: Key, value: BPPrintSettings[Key]) =>
@@ -82,6 +107,16 @@ export function PrintSettingsSection({ style, settings, onChange }: PrintSetting
           detail={resolutionToString(settings.resolution)}
           onPress={() => resolutionModalRef.current?.present()}
         />
+        <Row
+          text='Halftone'
+          detail={halftoneToString(settings.halftone)}
+          onPress={() => halftoneModalRef.current?.present()}
+        />
+        <Row
+          text='Halftone Threshold'
+          detail={`${settings.halftoneThreshold ?? 'Default'}`}
+          onPress={() => halftoneThresholdModalRef.current?.present()}
+        />
       </Section>
 
       {/* label size select */}
@@ -100,6 +135,24 @@ export function PrintSettingsSection({ style, settings, onChange }: PrintSetting
         items={resolutionItems}
         selected={settings.resolution}
         onSelect={(value) => fireOnChange('resolution', value as BPResolution)}
+      />
+
+      {/* halftone select */}
+      <ModalSelect
+        ref={halftoneModalRef}
+        title='Halftone'
+        items={halftoneItems}
+        selected={settings.halftone}
+        onSelect={(value) => fireOnChange('halftone', value as BPHalftone)}
+      />
+
+      {/* halftone threshold select */}
+      <ModalSelect
+        ref={halftoneThresholdModalRef}
+        title='Halftone Threshold'
+        items={halftoneThresholdItems}
+        selected={settings.halftoneThreshold}
+        onSelect={(value) => fireOnChange('halftoneThreshold', value as number)}
       />
     </>
   );
