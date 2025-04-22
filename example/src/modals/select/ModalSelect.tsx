@@ -20,7 +20,7 @@ export interface ModalSelectProps<Value> {
   title: string;
   items: ModalSelectItem<Value>[];
   selected?: Value;
-  onSelect: (value: Value) => void | Promise<void>;
+  onSelect: (value: Value, index: number) => void | Promise<void>;
 }
 
 export interface ModalSelectMethods {
@@ -60,12 +60,12 @@ export const ModalSelect = forwardRef<ModalSelectMethods, ModalSelectProps<unkno
         scrollIndicatorInsets={{ bottom: safeAreaInsets.bottom }}
         data={items}
         keyExtractor={(item, index) => item.key ?? `${index}`}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <Row
             text={item.label}
             accessory={item.value === selected ? <CheckIcon /> : undefined}
             onPress={() => {
-              onSelect(item.value);
+              onSelect(item.value, index);
               bottomSheetRef.current?.dismiss();
             }}
           />

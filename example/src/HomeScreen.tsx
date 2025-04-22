@@ -10,7 +10,7 @@ import { BPChannel, BPPrintSettings, BPQLLabelSize, BrotherPrinterSDK } from 'ex
 
 import { Button } from './components';
 import { ChannelSelectSection, PreviewSection, PrintSettingsSection } from './sections';
-import { MediaService } from './services';
+import { MediaService, SampleImage } from './services';
 import { GS } from './styles';
 
 export function HomeScreen() {
@@ -20,6 +20,7 @@ export function HomeScreen() {
     labelSize: BPQLLabelSize.RollW62,
     autoCut: true,
   });
+  const [image, setImage] = useState<SampleImage>(() => MediaService.sampleImages[1]);
 
   // print callback
   const onPrint = async () => {
@@ -27,7 +28,7 @@ export function HomeScreen() {
     if (!channel) return;
 
     // send print job
-    const imageUri = await MediaService.sampleImageUrl();
+    const imageUri = await MediaService.urlForSampleImage(image);
     try {
       await BrotherPrinterSDK.printImage(imageUri, channel, settings);
     } catch (error) {
@@ -49,7 +50,7 @@ export function HomeScreen() {
         <ScrollView contentContainerStyle={[GS.px_sm, GS.py_md]}>
           <ChannelSelectSection style={GS.mb_md} selectedChannel={channel} onSelectChannel={setChannel} />
           <PrintSettingsSection style={GS.mb_md} settings={settings} onChange={setSettings} />
-          <PreviewSection style={GS.mb_md} />
+          <PreviewSection style={GS.mb_md} selectedImage={image} onSelectImage={setImage} />
         </ScrollView>
 
         {/* footer */}
