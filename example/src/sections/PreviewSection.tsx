@@ -50,7 +50,7 @@ export function PreviewSection({ style, selectedImage, onSelectImage }: PreviewS
         onPress={() => imageSelectModalRef.current?.present()}
       >
         {imageUri ?
-          <Image style={[GS.m_md, GS.rounded_md, { aspectRatio: 1 }]} source={{ uri: imageUri }} />
+          <Image style={GS.aspect_square} source={{ uri: imageUri }} />
         : <Row text='Loading...' />}
       </Section>
 

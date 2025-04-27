@@ -1,3 +1,4 @@
+import { aspect } from './aspect';
 import { border } from './border';
 import { flex } from './flex';
 import { overflow } from './overflow';
@@ -10,5 +11,6 @@ export const GS = {
   ...spacing,
   ...border,
   ...overflow,
+  ...aspect,
   ...typography,
 } as const;

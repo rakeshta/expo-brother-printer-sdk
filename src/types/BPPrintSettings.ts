@@ -9,25 +9,30 @@ export interface BPPrintSettings {
   labelSize?: BPQLLabelSize;
 
   /**
-   * A number of pages to cut. Defaults to `1`.
+   * A number of pages to cut.
    *
    * If set `1`, printer cut the paper each print a page.
    * If set `3`, printer cut the paper every print three pages.
    *
    * This setting only takes effect when {@link autoCut} is set to `true`.
+   *
+   * @default 1
    */
   autoCutForEachPageCount?: number;
 
   /**
    * Auto-cut after each page or as configured in {@link autoCutForEachPageCount}.
-   * Defaults to `false`.
+   *
+   * @default true
    *
    * @see {@link autoCutForEachPageCount}
    */
   autoCut?: boolean;
 
   /**
-   * Auto-cut at the end of the print job. Defaults to `false`.
+   * Auto-cut at the end of the print job. Defaults to `true`.
+   *
+   * @default true
    */
   cutAtEnd?: boolean;
 
@@ -39,7 +44,7 @@ export interface BPPrintSettings {
   /**
    * The halftone method to use.
    *
-   * @default `Threshold`.
+   * @default BPHalftone.PatternDither
    */
   halftone?: BPHalftone;
 

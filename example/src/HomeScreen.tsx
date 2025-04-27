@@ -16,10 +16,10 @@ import { GS } from './styles';
 export function HomeScreen() {
   // state
   const [channel, setChannel] = useState<BPChannel>();
-  const [settings, setSettings] = useState<BPPrintSettings>({
+  const [settings, setSettings] = useState<BPPrintSettings>(() => ({
+    ...BrotherPrinterSDK.defaultPrintSettings,
     labelSize: BPQLLabelSize.RollW62,
-    autoCut: true,
-  });
+  }));
   const [image, setImage] = useState<SampleImage>(() => MediaService.sampleImages[1]);
 
   // print callback

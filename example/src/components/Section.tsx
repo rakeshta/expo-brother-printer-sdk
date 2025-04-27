@@ -15,7 +15,7 @@ export interface SectionProps {
 export function Section({ style, contentStyle, title, titleAccessory, children, onPress }: SectionProps) {
   // contents
   const contents = (
-    <View style={[styles.root, GS.border, GS.rounded_md, style]}>
+    <View style={[styles.root, GS.border, GS.rounded_md, GS.overflow_hidden, style]}>
       <View style={[GS.flexRow, GS.itemsCenter, GS.justifyBetween, GS.px_md]}>
         <Text style={[styles.title, GS.py_md]}>{title}</Text>
         {titleAccessory}
