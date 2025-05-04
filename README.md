@@ -67,7 +67,7 @@ _NOTE: Connecting via WiFi works in both the Simulator and physical devices._
    });
    ```
 
-## Printing
+## Printing Images
 
 Once a printer channel is acquired, you can send a print job to it by specifying a URL to an image.
 
@@ -78,18 +78,43 @@ Use the `printImage` function to send a print job to the chosen printer channel.
 ```ts
 const imageUri = 'file:///path/to/local/image.png'; // PNG & JPEG formats are supported
 
-const channel  = /* channel obtained using Bluetooth or Wifi search methods above. */
+const channel  = /* channel obtained using Bluetooth or WiFi search methods above. */
 
 // all settings are optional. see BPrintSettings documentation for details
-const settings: BPrintSettings = {
+const settings: BPPrintSettings = {
   labelSize: BPQLLabelSize.RollW62,
   autoCutForEachPageCount: 1,
   autoCut: true,
   cutAtEnd: true,
   resolution: BPResolution.Normal,
+  halftone: BPHalftone.PatternDither,
 };
 
 await BrotherPrinterSDK.printImage(imageUri, channel, settings);
+```
+
+## Printing PDFs
+
+The SDK also supports printing PDFs. The functionality is very similar to when printing images.
+
+Use the `printPDF` function to send a PDF print job.
+
+```ts
+const pdfUri = 'file:///path/to/local/doc.pdf'; // local PDF file URL
+
+const channel  = /* channel obtained using Bluetooth or WiFi search methods above. */
+
+// all settings are optional. see BPrintSettings documentation for details
+const settings: BPPrintSettings = {
+  labelSize: BPQLLabelSize.RollW62,
+  autoCutForEachPageCount: 1,
+  autoCut: true,
+  cutAtEnd: true,
+  resolution: BPResolution.Normal,
+  halftone: BPHalftone.PatternDither,
+};
+
+await BrotherPrinterSDK.printPDF(pdfUri, channel, settings);
 ```
 
 # Contributing
