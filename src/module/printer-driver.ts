@@ -24,3 +24,49 @@ export const defaultPrintSettings: BPPrintSettings = {
 export async function printImage(url: string, channel: BPChannel, settings?: BPPrintSettings): Promise<void> {
   await NativeModule.printImageWithURL(url, channel, { ...defaultPrintSettings, ...settings });
 }
+
+/**
+ * Print a PDF from a URL. This method prints all pages of the PDF.
+ *
+ * @param url The PDF URL.
+ * @param channel The printer channel to use.
+ * @param settings Optional print settings.
+ *
+ * @see {@link defaultPrintSettings} for default settings.
+ */
+export async function printPDF(url: string, channel: BPChannel, settings?: BPPrintSettings): Promise<void>;
+
+/**
+ * Print the specified pages of a PDF from a URL.
+ *
+ * @param url The PDF URL.
+ * @param pages The pages to print.
+ * @param channel The printer channel to use.
+ * @param settings Optional print settings.
+ *
+ * @see {@link defaultPrintSettings} for default settings.
+ */
+export async function printPDF(
+  url: string,
+  pages: number[],
+  channel: BPChannel,
+  settings?: BPPrintSettings,
+): Promise<void>;
+
+export async function printPDF(
+  url: string,
+  pagesOrChannel: number[] | BPChannel,
+  channelOrSettings?: BPChannel | BPPrintSettings,
+  settings?: BPPrintSettings,
+): Promise<void> {
+  let pages: number[] = [];
+  let channel: BPChannel;
+  if (Array.isArray(pagesOrChannel)) {
+    pages = pagesOrChannel;
+    channel = channelOrSettings as BPChannel;
+  } else {
+    channel = pagesOrChannel as BPChannel;
+    settings = channelOrSettings as BPPrintSettings;
+  }
+  await NativeModule.printPDFWithURL(url, pages, channel, { ...defaultPrintSettings, ...settings });
+}

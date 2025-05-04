@@ -6,11 +6,11 @@ import Feather from '@expo/vector-icons/Feather';
 
 import { Row, Section } from '../components';
 import { ModalSelect, ModalSelectItem, ModalSelectMethods } from '../modals';
-import { MediaService, SampleImage } from '../services';
+import { MediaService, SampleMedia } from '../services';
 import { GS } from '../styles';
 
-const IMAGE_SELECT_ITEMS = MediaService.sampleImages.map(
-  (image): ModalSelectItem<SampleImage> => ({
+const IMAGE_SELECT_ITEMS = MediaService.sampleMedia.map(
+  (image): ModalSelectItem<SampleMedia> => ({
     key: image.name,
     label: image.name,
     value: image,
@@ -19,11 +19,11 @@ const IMAGE_SELECT_ITEMS = MediaService.sampleImages.map(
 
 export interface PreviewSectionProps {
   style?: StyleProp<ViewStyle>;
-  selectedImage: SampleImage;
-  onSelectImage: (image: SampleImage) => void;
+  selectedMedia: SampleMedia;
+  onSelectMedia: (media: SampleMedia) => void;
 }
 
-export function PreviewSection({ style, selectedImage, onSelectImage }: PreviewSectionProps) {
+export function PreviewSection({ style, selectedMedia, onSelectMedia }: PreviewSectionProps) {
   // state
   const [imageUri, setImageUri] = useState<string>();
 
@@ -33,10 +33,10 @@ export function PreviewSection({ style, selectedImage, onSelectImage }: PreviewS
   // fetch image
   useEffect(() => {
     (async () => {
-      const uri = await MediaService.urlForSampleImage(selectedImage);
+      const uri = await MediaService.urlForSampleThumbnail(selectedMedia);
       setImageUri(uri);
     })();
-  }, [selectedImage]);
+  }, [selectedMedia]);
 
   // render
   return (
@@ -59,8 +59,8 @@ export function PreviewSection({ style, selectedImage, onSelectImage }: PreviewS
         ref={imageSelectModalRef}
         title='Select Image'
         items={IMAGE_SELECT_ITEMS}
-        onSelect={(item) => onSelectImage(item as SampleImage)}
-        selected={selectedImage}
+        onSelect={(item) => onSelectMedia(item as SampleMedia)}
+        selected={selectedMedia}
       />
     </>
   );

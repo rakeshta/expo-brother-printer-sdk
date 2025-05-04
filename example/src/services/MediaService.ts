@@ -2,66 +2,96 @@ import { Image, ImageRequireSource } from 'react-native';
 
 import RNFetchBlob from 'rn-fetch-blob';
 
-export interface SampleImage {
+export interface SampleMedia {
   name: string;
-  source: ImageRequireSource;
+  thumbnail: ImageRequireSource;
+  media: ImageRequireSource;
+  mediaExt: string;
 }
 
-const SampleImages: SampleImage[] = [
+const SAMPLE_MEDIA: SampleMedia[] = [
   {
-    name: 'Sample 1',
-    source: require('../../assets/Sample-01.png'),
+    name: 'PNG: I heart A',
+    thumbnail: require('../../assets/Sample-01.png'),
+    media: require('../../assets/Sample-01.png'),
+    mediaExt: 'png',
   },
   {
-    name: 'Sample 2',
-    source: require('../../assets/Sample-02.png'),
+    name: 'PNG: Gray Stripes',
+    thumbnail: require('../../assets/Sample-02.png'),
+    media: require('../../assets/Sample-02.png'),
+    mediaExt: 'png',
+  },
+  {
+    name: 'PDF: The quick brown fox',
+    thumbnail: require('../../assets/Sample-03.png'),
+    media: require('../../assets/Sample-03.pdf'),
+    mediaExt: 'pdf',
   },
 ];
 
-async function downloadImage(url: string): Promise<string> {
-  const res = await RNFetchBlob.config({ fileCache: true, appendExt: 'png' }).fetch('GET', url);
+async function downloadMedia(url: string, ext: string): Promise<string> {
+  const res = await RNFetchBlob.config({ fileCache: true, appendExt: ext }).fetch('GET', url);
   const path = res.path();
   return `file://${path}`;
 }
 
 export class MediaService {
-  private static _sampleImageURLs: Record<ImageRequireSource, string> = {};
+  private static _sampleMediaURLs: Record<ImageRequireSource, string> = {};
 
   /**
-   * Returns a list of sample images in the app.
+   * Returns a list of sample media in the app.
    */
-  public static get sampleImages(): SampleImage[] {
-    return SampleImages;
+  public static get sampleMedia(): SampleMedia[] {
+    return SAMPLE_MEDIA;
   }
 
-  /**
-   * Returns a local file URL for the given sample image.
-   *
-   * @remarks
-   * If running in dev mode via metro, the image is downloaded from the the
-   * metro server and cached locally.
-   *
-   * @param image - The sample image to get the URL for.
-   * @returns The local file URL for the sample image.
-   */
-  public static async urlForSampleImage(image: SampleImage): Promise<string> {
+  private static async _localUrlForAsset(asset: ImageRequireSource, ext: string): Promise<string> {
     // return cached image URL if available
-    if (this._sampleImageURLs[image.source]) {
-      return this._sampleImageURLs[image.source];
+    if (this._sampleMediaURLs[asset]) {
+      return this._sampleMediaURLs[asset];
     }
 
     // fetch & cache image
-    return (this._sampleImageURLs[image.source] = await (async () => {
-      // locate sample image
-      const imageUri = Image.resolveAssetSource(image.source).uri;
+    return (this._sampleMediaURLs[asset] = await (async () => {
+      // locate the asset
+      const mediaUrl = Image.resolveAssetSource(asset).uri;
 
       // if local, return immediately
-      if (imageUri.startsWith('file://')) {
-        return imageUri;
+      if (mediaUrl.startsWith('file://')) {
+        return mediaUrl;
       }
 
-      // download image from metro
-      return downloadImage(imageUri);
+      // download file from metro
+      return downloadMedia(mediaUrl, ext);
     })());
+  }
+
+  /**
+   * Returns a local file URL for the given sample media thumbnail.
+   *
+   * @remarks
+   * If running in dev mode via metro, the file is downloaded from the the
+   * metro server and cached locally.
+   *
+   * @param image - The sample media to get the URL for.
+   * @returns The local file URL for the sample media thumbnail.
+   */
+  public static async urlForSampleThumbnail(image: SampleMedia): Promise<string> {
+    return this._localUrlForAsset(image.thumbnail, 'png');
+  }
+
+  /**
+   * Returns a local file URL for the given sample media.
+   *
+   * @remarks
+   * If running in dev mode via metro, the file is downloaded from the the
+   * metro server and cached locally.
+   *
+   * @param image - The sample media to get the URL for.
+   * @returns The local file URL for the sample media.
+   */
+  public static async urlForSampleMedia(image: SampleMedia): Promise<string> {
+    return this._localUrlForAsset(image.media, image.mediaExt);
   }
 }

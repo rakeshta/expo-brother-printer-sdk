@@ -10,7 +10,7 @@ import { BPChannel, BPPrintSettings, BPQLLabelSize, BrotherPrinterSDK } from 'ex
 
 import { Button } from './components';
 import { ChannelSelectSection, PreviewSection, PrintSettingsSection } from './sections';
-import { MediaService, SampleImage } from './services';
+import { MediaService, SampleMedia } from './services';
 import { GS } from './styles';
 
 export function HomeScreen() {
@@ -20,17 +20,26 @@ export function HomeScreen() {
     ...BrotherPrinterSDK.defaultPrintSettings,
     labelSize: BPQLLabelSize.RollW62,
   }));
-  const [image, setImage] = useState<SampleImage>(() => MediaService.sampleImages[1]);
+  const [media, setMedia] = useState<SampleMedia>(() => {
+    const media = MediaService.sampleMedia;
+    return media[media.length - 1]; // select last media by default
+  });
 
   // print callback
   const onPrint = async () => {
     // abort if printer not selected
     if (!channel) return;
 
+    // download media
+    const mediaUrl = await MediaService.urlForSampleMedia(media);
+
     // send print job
-    const imageUri = await MediaService.urlForSampleImage(image);
     try {
-      await BrotherPrinterSDK.printImage(imageUri, channel, settings);
+      if (media.mediaExt === 'pdf') {
+        await BrotherPrinterSDK.printPDF(mediaUrl, channel, settings);
+      } else {
+        await BrotherPrinterSDK.printImage(mediaUrl, channel, settings);
+      }
     } catch (error) {
       console.error('Print error:', error);
     }
@@ -50,7 +59,7 @@ export function HomeScreen() {
         <ScrollView contentContainerStyle={[GS.px_sm, GS.py_md]}>
           <ChannelSelectSection style={GS.mb_md} selectedChannel={channel} onSelectChannel={setChannel} />
           <PrintSettingsSection style={GS.mb_md} settings={settings} onChange={setSettings} />
-          <PreviewSection style={GS.mb_md} selectedImage={image} onSelectImage={setImage} />
+          <PreviewSection style={GS.mb_md} selectedMedia={media} onSelectMedia={setMedia} />
         </ScrollView>
 
         {/* footer */}
