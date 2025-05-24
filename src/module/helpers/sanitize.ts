@@ -28,7 +28,7 @@ export function sanitize(value: unknown): unknown {
   if (typeof value === 'object') {
     const sanitized: { [key: string]: unknown } = {};
     for (const key in value) {
-      sanitized[key] = sanitize(value[key]);
+      sanitized[key] = sanitize(value[key as keyof typeof value]);
     }
     return sanitized;
   }

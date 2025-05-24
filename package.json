@@ -31,9 +31,9 @@
   "homepage": "https://github.com/rakeshta/expo-brother-printer-sdk#readme",
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-    "@types/react": "^18.0.25",
-    "expo-module-scripts": "^3.5.2",
-    "expo-modules-core": "^1.12.20"
+    "@types/react": "~19.0.10",
+    "expo-module-scripts": "^4.1.7",
+    "expo-modules-core": "^2.3.13"
   },
   "peerDependencies": {
     "expo": "*",
