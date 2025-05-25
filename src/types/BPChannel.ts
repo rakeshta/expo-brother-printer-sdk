@@ -12,10 +12,6 @@ export enum BPChannelType {
 
 /**
  * Channel information for a Brother Printer.
- *
- * @remarks TODO: How to search for printers
- *
- * @remarks TODO: How to reconnect to previously found printers
  */
 export interface BPChannel {
   /** Channel type used to connect with printers */
@@ -28,15 +24,23 @@ export interface BPChannel {
   /** Model name of the printer. Example: 'QL-820NWB' */
   readonly modelName: string;
 
-  /** Serial number of the printer */
-  readonly serialNumber: string;
+  /** Serial number of the printer.
+   *  @remarks WiFi printers only. */
+  readonly serialNumber?: string;
 
-  /** MAC address of the printer. Not available for bluetooth printers. */
+  /** MAC address of the printer.
+   *  @remarks WiFi printers only. */
   readonly macAddress?: string;
 
-  /** Node name of the printer. Not available for bluetooth printers. */
+  /** Node name of the printer.
+   *  @remarks WiFi printers only. */
   readonly nodeName?: string;
 
-  /** Location of the printer. Not available for bluetooth printers. */
+  /** Location of the printer.
+   *  @remarks WiFi printers only. */
   readonly location?: string;
+
+  /** Alias of the printer.
+   *  @remarks Bluetooth Classic printers only. */
+  readonly alias?: string;
 }

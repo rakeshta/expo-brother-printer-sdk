@@ -40,7 +40,11 @@ export function ChannelSelectSection({ style, selectedChannel, onSelectChannel }
       {channels.map((channel) => (
         <Row
           key={channel.address}
-          text={channel.modelName}
+          text={
+            channel.alias && channel.alias !== channel.modelName ?
+              `${channel.modelName} (${channel.alias})`
+            : channel.modelName
+          }
           subText={`${channel.address} (${ChannelDescription[channel.type]})`}
           accessory={selectedChannel?.address === channel.address ? <CheckIcon /> : undefined}
           onPress={() => onSelectChannel(channel)}

@@ -8,6 +8,10 @@ import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 import java.lang.Thread
 import kotlin.coroutines.suspendCoroutine
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 
 class ExpoBrotherPrinterSdkModule : Module() {
   // Each module class must implement the definition function. The definition consists of components
@@ -21,87 +25,72 @@ class ExpoBrotherPrinterSdkModule : Module() {
     AsyncFunction("searchBluetoothPrinters") {
       Log.i("ExpoBrotherPrinterSdk", "Search using Bluetooth")
 
-      val channels = PrinterSearcher.startBluetoothSearch(appContext.reactContext).channels
-      return@AsyncFunction channels.map { channel ->
+      // Use non-null assertion for reactContext since we've checked above
+      val context = appContext.reactContext ?: throw Exception("React context is null")
+      val result = PrinterSearcher.startBluetoothSearch(context)
+      Log.i("ExpoBrotherPrinterSdk", "Found ${result.channels.size} Bluetooth printers")
+
+      // Map the results and return them properly
+      return@AsyncFunction result.channels.map { channel ->
         val extraInfo = channel.extraInfo
+        val modelName = extraInfo[Channel.ExtraInfoKey.ModelName] ?: ""
+        val address = channel.channelInfo
+        Log.d("ExpoBrotherPrinterSdk", "BT Model: $modelName, Address: $address")
+
         mapOf(
-                "type" to Channel.ChannelType.Bluetooth,
-                "address" to channel.getChannelInfo(),
-                "modelName" to (extraInfo[Channel.ExtraInfoKey.ModelName] ?: "Unknown"),
-                "serialNumber" to "Unknown",
-                "macAddress" to (extraInfo[Channel.ExtraInfoKey.MACAddress] ?: "Unknown"),
-                "nodeName" to (extraInfo[Channel.ExtraInfoKey.NodeName] ?: "Unknown"),
-                "location" to (extraInfo[Channel.ExtraInfoKey.Location] ?: "Unknown")
+          "type"      to 0, // 0 = TypeScript BPChannelType.BluetoothMFi
+          "address"   to address,
+          "modelName" to modelName,
+          "alias"     to (extraInfo[Channel.ExtraInfoKey.BluetoothAlias] ?: ""),
         )
       }
-
-      // return@AsyncFunction listOf<Map<String, Any>>()
     }
 
     /// Search for printers available on the same WiFi network
     AsyncFunction("searchNetworkPrinters") { options: Map<String, Any> ->
       // Log.i("ExpoBrotherPrinterSdk", "Search using WiFi")
+      println("ExpoBrotherPrinterSdk: Search using WiFi")
 
       val channels = kotlinx.coroutines.runBlocking { searchNetworkPrintersSync() }
-
-      channels.add(
-              mapOf(
-                      "type" to 1,
-                      "address" to "1234",
-                      "modelName" to "Unknown",
-                      "serialNumber" to "Unknown",
-                      "macAddress" to "Unknown",
-                      "nodeName" to "Unknown",
-                      "location" to "Unknown"
-              )
-      )
 
       return@AsyncFunction channels
     }
 
     /// Print image with URL
     AsyncFunction("printImageWithURL") {
-            url: String,
-            channelsDict: Map<String, Any>,
-            settingsDict: Map<String, Any> ->
+      url: String,
+      channelsDict: Map<String, Any>,
+      settingsDict: Map<String, Any> ->
       Log.i("ExpoBrotherPrinterSdk", "Print image with URL")
       return@AsyncFunction true
     }
   }
 
   suspend fun searchNetworkPrintersSync() =
-          suspendCoroutine<MutableList<Map<String, Any>>> { continuation ->
-            Log.i("ExpoBrotherPrinterSdk", "Search using WiFi")
+    suspendCoroutine<MutableList<Map<String, Any>>> { continuation ->
+      Log.i("ExpoBrotherPrinterSdk", "Search using WiFi Sync")
+      val option   = NetworkSearchOption(15.toDouble(), false)
+      val channels = mutableListOf<Map<String, Any>>()
+      val result   = PrinterSearcher.startNetworkSearch(appContext.reactContext, option) { channel ->
+        val extraInfo = channel.extraInfo
 
-            val option = NetworkSearchOption(15.toDouble(), false)
+        val modelName = channel.extraInfo[Channel.ExtraInfoKey.ModelName] ?: ""
+        val ipaddress = channel.channelInfo
+        Log.d("TAG", "Model : $modelName, IP Address: $ipaddress")
 
-            val channels = mutableListOf<Map<String, Any>>()
-            val result =
-                    PrinterSearcher.startNetworkSearch(appContext.reactContext, option) { channel ->
-                      val extraInfo = channel.extraInfo
-                      channels.add(
-                              mapOf(
-                                      "type" to Channel.ChannelType.Wifi,
-                                      "address" to channel.getChannelInfo(),
-                                      "modelName" to
-                                              (extraInfo[Channel.ExtraInfoKey.ModelName]
-                                                      ?: "Unknown"),
-                                      "serialNumber" to "Unknown",
-                                      "macAddress" to
-                                              (extraInfo[Channel.ExtraInfoKey.MACAddress]
-                                                      ?: "Unknown"),
-                                      "nodeName" to
-                                              (extraInfo[Channel.ExtraInfoKey.NodeName]
-                                                      ?: "Unknown"),
-                                      "location" to
-                                              (extraInfo[Channel.ExtraInfoKey.Location]
-                                                      ?: "Unknown")
-                              )
-                      )
-                    }
-
-            Thread.sleep(1_000)
-
-            continuation.resumeWith(Result.success(channels))
-          }
+        channels.add(
+          mapOf(
+            "type"         to Channel.ChannelType.Wifi,
+            "address"      to channel.getChannelInfo(),
+            "modelName"    to (extraInfo[Channel.ExtraInfoKey.ModelName]  ?: "Unknown"),
+            "serialNumber" to "Unknown",
+            "macAddress"   to (extraInfo[Channel.ExtraInfoKey.MACAddress] ?: "Unknown"),
+            "nodeName"     to (extraInfo[Channel.ExtraInfoKey.NodeName]   ?: "Unknown"),
+            "location"     to (extraInfo[Channel.ExtraInfoKey.Location]   ?: "Unknown")
+          )
+        )
+      }
+      Thread.sleep(1_000)
+      continuation.resumeWith(Result.success(channels))
+    }
 }
