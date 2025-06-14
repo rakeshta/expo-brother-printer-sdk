@@ -2,15 +2,13 @@ package com.vpass.brotherprintersdk
 
 import android.util.Log
 import com.brother.sdk.lmprinter.Channel
-import com.brother.sdk.lmprinter.NetworkSearchOption
+import com.brother.sdk.lmprinter.OpenChannelError
+import com.brother.sdk.lmprinter.PrintError
+import com.brother.sdk.lmprinter.PrinterDriverGenerator
 import com.brother.sdk.lmprinter.PrinterSearcher
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
-import java.lang.Thread
-import kotlin.coroutines.suspendCoroutine
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import java.net.URI
 
 
 class ExpoBrotherPrinterSdkModule : Module() {
@@ -48,49 +46,70 @@ class ExpoBrotherPrinterSdkModule : Module() {
 
     /// Search for printers available on the same WiFi network
     AsyncFunction("searchNetworkPrinters") { options: Map<String, Any> ->
-      // Log.i("ExpoBrotherPrinterSdk", "Search using WiFi")
-      println("ExpoBrotherPrinterSdk: Search using WiFi")
+      Log.i("ExpoBrotherPrinterSdk", "Search using WiFi")
+      Log.d("ExpoBrotherPrinterSdk", "-  Options: $options")
 
-      val channels = kotlinx.coroutines.runBlocking { searchNetworkPrintersSync() }
-
-      return@AsyncFunction channels
+      // return empty list for now
+      return@AsyncFunction emptyList<Map<String, Any>>()
     }
 
     /// Print image with URL
     AsyncFunction("printImageWithURL") {
-      url: String,
-      channelsDict: Map<String, Any>,
+      urlString: String,
+      channelDict: Map<String, Any>,
       settingsDict: Map<String, Any> ->
       Log.i("ExpoBrotherPrinterSdk", "Print image with URL")
-      return@AsyncFunction true
+
+      // get context for creating channel
+      val context = appContext.reactContext ?: throw GenericError("React context is null")
+
+      // parse URI
+      var uri = URI(urlString)
+      Log.d("ExpoBrotherPrinterSdk", "-  URL: $uri.toString()")
+
+      // re-construct chanel
+      val channel = ChannelUtils.channelFromDictionary(channelDict, context)
+      Log.d("ExpoBrotherPrinterSdk", "-  Channel: $channel")
+      Log.d("ExpoBrotherPrinterSdk", "-     Address: ${channel.channelInfo}")
+      Log.d("ExpoBrotherPrinterSdk", "-     Model:   ${channel.extraInfo[Channel.ExtraInfoKey.ModelName]}")
+
+      // get model name from channel info or from channelDict
+      val modelName = (channel.extraInfo[Channel.ExtraInfoKey.ModelName]
+        ?: channelDict["modelName"] as? String)
+        ?: throw GenericError("Model name could not be retrieved")
+      Log.d("ExpoBrotherPrinterSdk", "-  Model Name: $modelName")
+
+      // parse settings from dictionary
+      val settings = SettingsUtil.settingsFromDictionary(settingsDict, modelName)
+
+      // connect to printer
+      var result = PrinterDriverGenerator.openChannel(channel);
+      if (result.getError().getCode() != OpenChannelError.ErrorCode.NoError) {
+        throw GenericError("Connection failed: ${result.getError().getCode()}")
+      }
+
+      var printerDriver = result.getDriver();
+
+      // print image
+      var printError = printerDriver.printImage(uri.getPath(), settings);
+      if (printError.getCode() != PrintError.ErrorCode.NoError) {
+        printerDriver.closeChannel();
+        throw GenericError("Print failed: ${printError.getCode()}")
+      }
+
+      // close channel
+      printerDriver.closeChannel();
+    }
+
+    /// Print image with URL
+    AsyncFunction("printPDFWithURL") {
+      urlString: String,
+      pages: List<Int>,
+      channelDict: Map<String, Any>,
+      settingsDict: Map<String, Any> ->
+      Log.i("ExpoBrotherPrinterSdk", "Print PDF with URL")
+      throw GenericError("PDF printing is not implemented yet")
+      return@AsyncFunction
     }
   }
-
-  suspend fun searchNetworkPrintersSync() =
-    suspendCoroutine<MutableList<Map<String, Any>>> { continuation ->
-      Log.i("ExpoBrotherPrinterSdk", "Search using WiFi Sync")
-      val option   = NetworkSearchOption(15.toDouble(), false)
-      val channels = mutableListOf<Map<String, Any>>()
-      val result   = PrinterSearcher.startNetworkSearch(appContext.reactContext, option) { channel ->
-        val extraInfo = channel.extraInfo
-
-        val modelName = channel.extraInfo[Channel.ExtraInfoKey.ModelName] ?: ""
-        val ipaddress = channel.channelInfo
-        Log.d("TAG", "Model : $modelName, IP Address: $ipaddress")
-
-        channels.add(
-          mapOf(
-            "type"         to Channel.ChannelType.Wifi,
-            "address"      to channel.getChannelInfo(),
-            "modelName"    to (extraInfo[Channel.ExtraInfoKey.ModelName]  ?: "Unknown"),
-            "serialNumber" to "Unknown",
-            "macAddress"   to (extraInfo[Channel.ExtraInfoKey.MACAddress] ?: "Unknown"),
-            "nodeName"     to (extraInfo[Channel.ExtraInfoKey.NodeName]   ?: "Unknown"),
-            "location"     to (extraInfo[Channel.ExtraInfoKey.Location]   ?: "Unknown")
-          )
-        )
-      }
-      Thread.sleep(1_000)
-      continuation.resumeWith(Result.success(channels))
-    }
 }
