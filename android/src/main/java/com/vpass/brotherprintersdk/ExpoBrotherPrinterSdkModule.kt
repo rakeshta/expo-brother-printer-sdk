@@ -65,7 +65,7 @@ class ExpoBrotherPrinterSdkModule : Module() {
 
       // parse URI
       var uri = URI(urlString)
-      Log.d("ExpoBrotherPrinterSdk", "-  URL: $uri.toString()")
+      Log.d("ExpoBrotherPrinterSdk", "-  URL: ${uri.getPath()}")
 
       // re-construct chanel
       val channel = ChannelUtils.channelFromDictionary(channelDict, context)
@@ -80,20 +80,26 @@ class ExpoBrotherPrinterSdkModule : Module() {
       Log.d("ExpoBrotherPrinterSdk", "-  Model Name: $modelName")
 
       // parse settings from dictionary
-      val settings = SettingsUtil.settingsFromDictionary(settingsDict, modelName)
+      val settings = SettingsUtil.settingsFromDictionary(
+        settingsDict,
+        modelName,
+        context.applicationContext.filesDir.absolutePath
+      )
 
       // connect to printer
       var result = PrinterDriverGenerator.openChannel(channel);
       if (result.getError().getCode() != OpenChannelError.ErrorCode.NoError) {
+        Log.e("ExpoBrotherPrinterSdk", "Connection failed: ${result.getError()}")
         throw GenericError("Connection failed: ${result.getError().getCode()}")
       }
 
       var printerDriver = result.getDriver();
 
       // print image
-      var printError = printerDriver.printImage(uri.getPath(), settings);
+      var printError = printerDriver.printImage(uri.getPath(), settings)
       if (printError.getCode() != PrintError.ErrorCode.NoError) {
         printerDriver.closeChannel();
+        Log.e("ExpoBrotherPrinterSdk", "Print failed: ${printError.getErrorDescription()}")
         throw GenericError("Print failed: ${printError.getCode()}")
       }
 

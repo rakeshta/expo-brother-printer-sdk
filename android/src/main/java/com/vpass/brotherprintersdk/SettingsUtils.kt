@@ -94,7 +94,7 @@ class SettingsUtil private constructor() {
       }
     }
 
-    fun settingsFromDictionary(dictionary: Map<String, Any>, modelName: String): PrintSettings {
+    fun settingsFromDictionary(dictionary: Map<String, Any>, modelName: String, workPath: String): PrintSettings {
       // decode supported model from name
       var model = _printerModelFromName(modelName)
       if (model == null) {
@@ -103,6 +103,7 @@ class SettingsUtil private constructor() {
 
       // construct default settings for the model
       val settings = QLPrintSettings(model)
+      settings.setWorkPath(workPath)
 
       // parse settings from dictionary
       dictionary.forEach { (key, value) ->
