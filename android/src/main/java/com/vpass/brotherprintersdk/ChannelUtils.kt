@@ -1,6 +1,7 @@
 package com.vpass.brotherprintersdk
 
 import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
 import android.content.Context
 import com.brother.sdk.lmprinter.Channel
 
@@ -26,8 +27,11 @@ class ChannelUtils private constructor() {
             // Create appropriate channel based on type
             return when (typeRaw) {
                 0.0 -> { // Bluetooth MFi
-                    val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+                    val bluetoothAdapter = getBluetoothAdapter(context)
                         ?: throw GenericError("Bluetooth not supported on this device")
+                    if(!bluetoothAdapter.isEnabled){
+                        bluetoothAdapter.enable()
+                    }
                     Channel.newBluetoothChannel(address, bluetoothAdapter)
                 }
                 1.0 -> { // WiFi
@@ -40,6 +44,12 @@ class ChannelUtils private constructor() {
                 }
                 else -> throw GenericError("Unsupported channel type: $typeRaw")
             }
+        }
+
+
+        private fun getBluetoothAdapter(context: Context): BluetoothAdapter? {
+            val manager = context.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+            return manager.adapter
         }
     }
 }

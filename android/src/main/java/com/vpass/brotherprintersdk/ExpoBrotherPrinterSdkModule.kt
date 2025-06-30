@@ -2,6 +2,7 @@ package com.vpass.brotherprintersdk
 
 import android.util.Log
 import com.brother.sdk.lmprinter.Channel
+import com.brother.sdk.lmprinter.NetworkSearchOption
 import com.brother.sdk.lmprinter.OpenChannelError
 import com.brother.sdk.lmprinter.PrintError
 import com.brother.sdk.lmprinter.PrinterDriverGenerator
@@ -33,7 +34,7 @@ class ExpoBrotherPrinterSdkModule : Module() {
         val extraInfo = channel.extraInfo
         val modelName = extraInfo[Channel.ExtraInfoKey.ModelName] ?: ""
         val address = channel.channelInfo
-        Log.d("ExpoBrotherPrinterSdk", "BT Model: $modelName, Address: $address")
+        Log.d("ExpoBrotherPrinterSdk", "-  BT Model: $modelName, Address: $address")
 
         mapOf(
           "type"      to 0, // 0 = TypeScript BPChannelType.BluetoothMFi
@@ -49,8 +50,35 @@ class ExpoBrotherPrinterSdkModule : Module() {
       Log.i("ExpoBrotherPrinterSdk", "Search using WiFi")
       Log.d("ExpoBrotherPrinterSdk", "-  Options: $options")
 
-      // return empty list for now
-      return@AsyncFunction emptyList<Map<String, Any>>()
+      // parse network search options
+      val option = OptionsUtils.networkSearchOptionsFromDictionary(options)
+
+      // debug
+      val context = appContext.reactContext ?: throw Exception("React context is null")
+      val result = PrinterSearcher.startNetworkSearch(context, option) { channel ->
+        val modelName = channel.extraInfo[Channel.ExtraInfoKey.ModelName] ?: ""
+        val ipaddress = channel.channelInfo
+        Log.d("ExpoBrotherPrinterSdk", "-  WiFi Model: $modelName, IP Address: $ipaddress")
+      }
+      Log.i("ExpoBrotherPrinterSdk", "Found ${result.channels.size} WiFi printers")
+
+      // Map the results and return them properly
+      return@AsyncFunction result.channels.map { channel ->
+        val extraInfo = channel.extraInfo
+        val modelName = extraInfo[Channel.ExtraInfoKey.ModelName] ?: ""
+        val address = channel.channelInfo
+        Log.d("ExpoBrotherPrinterSdk", "BT Model: $modelName, Address: $address")
+
+        mapOf(
+          "type"         to  1, // 1 = TypeScript BPChannelType.WiFi
+          "address"      to  address,
+          "modelName"    to  modelName,
+          "serialNumber" to (extraInfo[Channel.ExtraInfoKey.SerialNubmer] ?: ""), // Yup - typo in SDK
+          "macAddress"   to (extraInfo[Channel.ExtraInfoKey.MACAddress]   ?: ""),
+          "nodeName"     to (extraInfo[Channel.ExtraInfoKey.NodeName]     ?: ""),
+          "location"     to (extraInfo[Channel.ExtraInfoKey.Location]     ?: ""),
+        )
+      }
     }
 
     /// Print image with URL
