@@ -20,7 +20,7 @@
 		13B07F961A680F5B00A75B9A /* BrotherPrinterSDKExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BrotherPrinterSDKExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = BrotherPrinterSDKExample/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = BrotherPrinterSDKExample/Info.plist; sourceTree = "<group>"; };
-		5367C04DFE3CD341621EB590 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = BrotherPrinterSDKExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		5367C04DFE3CD341621EB590 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = BrotherPrinterSDKExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		5BF30B25FC9CBECA797D6E5F /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-BrotherPrinterSDKExample/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		5E5B735D25E76C3BAECAC80B /* Pods-BrotherPrinterSDKExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BrotherPrinterSDKExample.release.xcconfig"; path = "Target Support Files/Pods-BrotherPrinterSDKExample/Pods-BrotherPrinterSDKExample.release.xcconfig"; sourceTree = "<group>"; };
 		69C1137627C51BBF8A0BA061 /* Pods-BrotherPrinterSDKExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BrotherPrinterSDKExample.debug.xcconfig"; path = "Target Support Files/Pods-BrotherPrinterSDKExample/Pods-BrotherPrinterSDKExample.debug.xcconfig"; sourceTree = "<group>"; };
@@ -128,7 +128,6 @@
 				69C1137627C51BBF8A0BA061 /* Pods-BrotherPrinterSDKExample.debug.xcconfig */,
 				5E5B735D25E76C3BAECAC80B /* Pods-BrotherPrinterSDKExample.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -334,6 +333,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = BrotherPrinterSDKExample/BrotherPrinterSDKExample.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3PMBAJE6H9;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -370,6 +370,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = BrotherPrinterSDKExample/BrotherPrinterSDKExample.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 3PMBAJE6H9;
 				INFOPLIST_FILE = BrotherPrinterSDKExample/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -447,10 +448,7 @@
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
@@ -505,10 +503,7 @@
 				);
 				LIBRARY_SEARCH_PATHS = "$(SDKROOT)/usr/lib/swift\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					" ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				USE_HERMES = true;

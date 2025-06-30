@@ -3,19 +3,30 @@
  */
 export interface BPNetworkSearchOptions {
   /**
+   * Search duration in milliseconds.
+   *
+   * @default 1000
+   */
+  searchDuration?: number;
+
+  /**
    * Printer models to search for.
+   *
+   * @remarks iOS only.
    *
    * @example
    * ```ts
    * ['QL-1110NWB', 'QL-820NWB']
    * ```
    */
-  printerList: string[];
+  printerList?: string[];
 
   /**
-   * Search duration in milliseconds.
+   * Whether to find printers shared via tethering.
    *
-   * @default 1000
+   * @remarks Android only.
+   *
+   * @default false
    */
-  searchDuration?: number;
+  isTethering?: boolean;
 }
