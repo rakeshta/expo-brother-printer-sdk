@@ -4,7 +4,10 @@ type ManifestUsesPermission = AndroidConfig.Manifest.ManifestUsesPermission;
 
 export const withAndroidConfig: ConfigPlugin = (config) => {
   return withAndroidManifest(config, async (config) => {
-    // TODO: Add xmlns:tools="http://schemas.android.com/tools" to manifest tag
+    // add xmlns:tools="http://schemas.android.com/tools" to manifest tag
+    if (!config.modResults.manifest.$.hasOwnProperty('xmlns:tools')) {
+      config.modResults.manifest.$['xmlns:tools'] = 'http://schemas.android.com/tools';
+    }
 
     // ensure 'uses-permission' array exists
     if (!config.modResults.manifest['uses-permission']) {
@@ -15,6 +18,7 @@ export const withAndroidConfig: ConfigPlugin = (config) => {
     // https://support.brother.com/g/s/es/htmldoc/mobilesdk/guide/getting-started/getting-started-android.html#add-permissions
     const manifestUsesPermissions = config.modResults.manifest['uses-permission'];
     addUsesPermission(manifestUsesPermissions, 'android.permission.INTERNET');
+    addUsesPermission(manifestUsesPermissions, 'android.permission.ACCESS_NETWORK_STATE');
     addUsesPermission(manifestUsesPermissions, 'android.permission.BLUETOOTH');
     addUsesPermission(manifestUsesPermissions, 'android.permission.BLUETOOTH_ADMIN');
     addUsesPermission(manifestUsesPermissions, 'android.permission.BLUETOOTH_SCAN', {
@@ -22,7 +26,9 @@ export const withAndroidConfig: ConfigPlugin = (config) => {
       'tools:targetApi': 's',
     });
     addUsesPermission(manifestUsesPermissions, 'android.permission.BLUETOOTH_CONNECT');
-    addUsesPermission(manifestUsesPermissions, 'android.permission.ACCESS_FINE_LOCATION');
+    addUsesPermission(manifestUsesPermissions, 'android.permission.ACCESS_FINE_LOCATION', {
+      'android:maxSdkVersion': '32',
+    });
     addUsesPermission(manifestUsesPermissions, 'android.permission.WRITE_EXTERNAL_STORAGE');
 
     return config;
