@@ -105,6 +105,14 @@ class SettingsUtil private constructor() {
       val settings = QLPrintSettings(model)
       settings.setWorkPath(workPath)
 
+      // configure default settings
+      settings.autoCutForEachPageCount = 1
+      settings.isAutoCut = false
+      settings.isCutAtEnd = false
+      settings.resolution = PrintImageSettings.Resolution.Normal
+      settings.halftone = PrintImageSettings.Halftone.Threshold
+      settings.halftoneThreshold = 128
+
       // parse settings from dictionary
       dictionary.forEach { (key, value) ->
         when (key) {
@@ -128,13 +136,13 @@ class SettingsUtil private constructor() {
             }
           }
           "halftone" -> {
-            if (value is Int) {
-              settings.halftone = _halftoneFromValue(value)
+            if (value is Double) {
+              settings.halftone = _halftoneFromValue(value.toInt())
             }
           }
           "halftoneThreshold" -> {
-            if (value is Int) {
-              settings.halftoneThreshold = value
+            if (value is Double) {
+              settings.halftoneThreshold = value.toInt()
             }
           }
         }
