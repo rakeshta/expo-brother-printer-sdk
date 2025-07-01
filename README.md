@@ -62,7 +62,8 @@ _NOTE: Connecting via WiFi works in both the Simulator and physical devices._
    Note that this method requires you to specify the model(s) of printers to search for.
    ```ts
    const wifiChannels = await BrotherPrinterSDK.searchNetworkPrinters({
-     printerList: ['QL-820NWB'], // required
+     printerList: ['QL-820NWB'], // iOS only
+     isTethering: false,         // Android only
      searchDuration: 2000,       // optional; defaults to 1000ms
    });
    ```
@@ -119,4 +120,4 @@ await BrotherPrinterSDK.printPDF(pdfUri, channel, settings);
 
 # Contributing
 
-Contributions are very welcome! Please refer to guidelines described in the [contributing guide]( https://github.com/expo/expo#contributing).
+Contributions are very welcome! Please refer to guidelines described in the [contributing guide](https://github.com/expo/expo#contributing).
