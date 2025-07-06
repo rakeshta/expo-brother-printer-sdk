@@ -81,8 +81,7 @@ public class ExpoBrotherPrinterSdkModule: Module {
             NSLog("-  Settings: \(settingsDict)")
 
             // connect to printer
-            let printerName   = "\(modelName) (\(channel.channelInfo))"
-            NSLog("... Connecting to \(printerName)")
+            NSLog("...Connecting to \(modelName) at \(channel.channelInfo)")
             let driverResult = BRLMPrinterDriverGenerator.open(channel)
             guard
                 driverResult.error.code == .noError,
@@ -93,11 +92,12 @@ public class ExpoBrotherPrinterSdkModule: Module {
 
             // close connection before exit
             defer {
+            NSLog("...Disconnecting")
                 driver.closeChannel()
             }
 
             // print image
-            NSLog("... Printing")
+            NSLog("...Printing")
             let error = driver.printImage(with: url, settings: settings)
             if  error.code != BRLMPrintErrorCode.noError {
                 NSLog("Print failed - \(error)")
@@ -139,8 +139,7 @@ public class ExpoBrotherPrinterSdkModule: Module {
             NSLog("-  Settings: \(settingsDict)")
 
             // connect to printer
-            let printerName   = "\(modelName) (\(channel.channelInfo))"
-            NSLog("... Connecting to \(printerName)")
+            NSLog("...Connecting to \(modelName) at \(channel.channelInfo)")
             let driverResult = BRLMPrinterDriverGenerator.open(channel)
             guard
                 driverResult.error.code == .noError,
@@ -151,11 +150,12 @@ public class ExpoBrotherPrinterSdkModule: Module {
 
             // close connection before exit
             defer {
+            NSLog("...Disconnecting")
                 driver.closeChannel()
             }
 
             // print pdf
-            NSLog("... Printing")
+            NSLog("...Printing")
             let error = pages.isEmpty
                 ? driver.printPDF(with: url, settings: settings)
                 : driver.printPDF(with: url, pages: pages.map { NSNumber(value: $0) }, settings: settings)

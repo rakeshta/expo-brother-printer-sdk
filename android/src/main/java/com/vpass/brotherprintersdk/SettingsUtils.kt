@@ -10,27 +10,21 @@ class SettingsUtil private constructor() {
   companion object {
     private fun _printerModelFromName(name: String): PrinterModel? {
       if (name.startsWith("QL-710W")) {
-        Log.d("ExpoBrotherPrinterSdk", "_printerModelFromName - Found QL-710W")
         return PrinterModel.QL_710W
       }
       if (name.startsWith("QL-720NW")) {
-        Log.d("ExpoBrotherPrinterSdk", "_printerModelFromName - Found QL-720NW")
         return PrinterModel.QL_720NW
       }
       if (name.startsWith("QL-810W")) {
-        Log.d("ExpoBrotherPrinterSdk", "_printerModelFromName - Found QL-810W")
         return PrinterModel.QL_810W
       }
       if (name.startsWith("QL-820NWB")) {
-        Log.d("ExpoBrotherPrinterSdk", "_printerModelFromName - Found QL-820NWB")
         return PrinterModel.QL_820NWB
       }
       if (name.startsWith("QL-1110NWB")) {
-        Log.d("ExpoBrotherPrinterSdk", "_printerModelFromName - Found QL-1110NWB")
         return PrinterModel.QL_1110NWB
       }
       if (name.startsWith("QL-1115NWB")) {
-        Log.d("ExpoBrotherPrinterSdk", "_printerModelFromName - Found QL-1115NWB")
         return PrinterModel.QL_1115NWB
       }
       Log.d("ExpoBrotherPrinterSdk", "_printerModelFromName - No matching model found for: $name")
