@@ -9,8 +9,8 @@ export const typography = StyleSheet.create({
   text_xs: { fontSize: 12 },
   text_sm: { fontSize: 14 },
   text_md: { fontSize: 16 },
-  text_lg: { fontSize: 20 },
-  text_xl: { fontSize: 24 },
+  text_lg: { fontSize: 18 },
+  text_xl: { fontSize: 22 },
 
   font_bold: { fontWeight: 'bold' },
   font_normal: { fontWeight: 'normal' },

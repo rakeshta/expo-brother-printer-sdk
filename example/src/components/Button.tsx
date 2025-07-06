@@ -1,4 +1,4 @@
-import { StyleProp, StyleSheet, Text, TouchableOpacity, ViewStyle } from 'react-native';
+import { StyleProp, Text, TouchableOpacity, ViewStyle } from 'react-native';
 
 import { GS } from '../styles';
 
@@ -11,23 +11,21 @@ export interface ButtonProps {
 
 export function Button({ style, title, disabled, onPress }: ButtonProps) {
   return (
-    <TouchableOpacity style={[styles.root, GS.p_sm, style]} disabled={disabled} onPress={onPress}>
-      <Text style={styles.title}>{title}</Text>
+    <TouchableOpacity
+      style={[
+        GS.min_w_11,
+        GS.min_h_11,
+        GS.rounded_md,
+        GS.bg_brand_primary,
+        GS.p_sm,
+        GS.itemsCenter,
+        GS.justifyCenter,
+        style,
+      ]}
+      disabled={disabled}
+      onPress={onPress}
+    >
+      <Text style={[GS.color_text_reverse, GS.text_md, GS.font_bold]}>{title}</Text>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    minWidth: 44,
-    minHeight: 44,
-    borderRadius: 6,
-    backgroundColor: '#ccccff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-});

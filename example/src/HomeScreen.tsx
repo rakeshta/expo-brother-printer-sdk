@@ -50,10 +50,10 @@ export function HomeScreen() {
 
   // render
   return (
-    <GestureHandlerRootView style={styles.root}>
+    <GestureHandlerRootView style={[GS.flex1, GS.bg_surface_secondary]}>
       <BottomSheetModalProvider>
         {/* header */}
-        <View style={[styles.header, { height: safeAreaInsets.top }]} />
+        <View style={[GS.bg_surface_primary, GS.border_b, { height: safeAreaInsets.top }]} />
 
         {/* scroll area */}
         <ScrollView contentContainerStyle={[GS.px_sm, GS.py_md]}>
@@ -63,7 +63,7 @@ export function HomeScreen() {
         </ScrollView>
 
         {/* footer */}
-        <View style={styles.footer}>
+        <View style={[GS.bg_surface_primary, GS.border_t]}>
           <View style={[GS.px_lg, GS.py_md]}>
             <Button title='Print' disabled={!channel} onPress={onPrint} />
           </View>
@@ -73,20 +73,3 @@ export function HomeScreen() {
     </GestureHandlerRootView>
   );
 }
-
-const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: '#f0f0f0',
-  },
-  header: {
-    backgroundColor: '#fff',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderColor: '#ccc',
-  },
-  footer: {
-    backgroundColor: '#fff',
-    borderTopWidth: StyleSheet.hairlineWidth,
-    borderColor: '#ccc',
-  },
-});

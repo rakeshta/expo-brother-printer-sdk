@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react';
 
-import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { StyleProp, Text, View, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BottomSheetFlatList, BottomSheetModal } from '@gorhom/bottom-sheet';
@@ -52,7 +52,7 @@ export const ModalSelect = forwardRef<ModalSelectMethods, ModalSelectProps<unkno
       enableDynamicSizing={false}
       backdropComponent={CustomBackdrop}
     >
-      <View style={[styles.header, GS.border_b, GS.px_md]}>
+      <View style={[GS.h_9, GS.border_b, GS.px_md]}>
         <Text style={[GS.font_bold, GS.text_md]}>{title}</Text>
       </View>
       <BottomSheetFlatList
@@ -73,10 +73,4 @@ export const ModalSelect = forwardRef<ModalSelectMethods, ModalSelectProps<unkno
       />
     </BottomSheetModal>
   );
-});
-
-const styles = StyleSheet.create({
-  header: {
-    height: 28,
-  },
 });

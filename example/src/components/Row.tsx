@@ -1,4 +1,4 @@
-import { StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { StyleProp, Text, TouchableOpacity, View, ViewStyle } from 'react-native';
 
 import { GS } from '../styles';
 
@@ -14,10 +14,10 @@ export interface RowProps {
 export function Row({ style, text, subText, detail, accessory, onPress }: RowProps) {
   // contents
   const contents = (
-    <View style={[styles.root, GS.flexRow, GS.itemsCenter, GS.px_md, style]}>
+    <View style={[GS.min_h_11, GS.flexRow, GS.itemsCenter, GS.px_md, style]}>
       <View style={[GS.flex1, GS.py_md]}>
         <Text style={[GS.text_md]}>{text}</Text>
-        {subText && <Text style={[styles.subText, GS.text_sm, GS.mt_xs]}>{subText}</Text>}
+        {subText && <Text style={[GS.color_text_secondary, GS.text_sm, GS.mt_xs]}>{subText}</Text>}
       </View>
       {detail && <Text style={[GS.text_md, GS.text_right, GS.font_bold, GS.ml_lg, GS.flex1]}>{detail}</Text>}
       {accessory && <View style={GS.ml_lg}>{accessory}</View>}
@@ -27,12 +27,3 @@ export function Row({ style, text, subText, detail, accessory, onPress }: RowPro
   // render
   return onPress ? <TouchableOpacity onPress={onPress}>{contents}</TouchableOpacity> : contents;
 }
-
-const styles = StyleSheet.create({
-  root: {
-    minHeight: 44,
-  },
-  subText: {
-    color: '#666',
-  },
-});

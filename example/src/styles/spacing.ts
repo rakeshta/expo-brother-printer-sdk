@@ -1,9 +1,11 @@
 import { StyleSheet } from 'react-native';
 
-const XS = 4;
-const SM = 8;
-const MD = 16;
-const LG = 24;
+import { UNIT_SPACE } from './size';
+
+const XS = UNIT_SPACE;
+const SM = UNIT_SPACE * 2;
+const MD = UNIT_SPACE * 4;
+const LG = UNIT_SPACE * 6;
 
 export const spacing = StyleSheet.create({
   m_0: { margin: 0 },
