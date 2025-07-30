@@ -1,4 +1,4 @@
-import { Permission, PermissionsAndroid, Platform } from 'react-native';
+import { PermissionsAndroid, Platform } from 'react-native';
 
 import { BPChannel, BPNetworkSearchOptions } from '../types';
 import { sanitize } from './helpers';
@@ -7,8 +7,13 @@ import { NativeModule } from './native-module';
 /** Helper function to check and request the required permissions on Android. */
 const checkAndRequestAndroidPermissions = Platform.select({
   android: async (): Promise<boolean> => {
+    // runtime permissions are not required for Android 11 and below
+    if (Platform.OS === 'android' && Platform.Version <= 30) {
+      return true;
+    }
+
     // Ensure Bluetooth permissions are granted on Android
-    const permissions: Permission[] = [
+    const permissions = [
       PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
       PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
     ];

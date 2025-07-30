@@ -27,7 +27,7 @@ export const withAndroidConfig: ConfigPlugin = (config) => {
     });
     addUsesPermission(manifestUsesPermissions, 'android.permission.BLUETOOTH_CONNECT');
     addUsesPermission(manifestUsesPermissions, 'android.permission.ACCESS_FINE_LOCATION', {
-      'android:maxSdkVersion': '32',
+      'android:maxSdkVersion': '30',
     });
     addUsesPermission(manifestUsesPermissions, 'android.permission.WRITE_EXTERNAL_STORAGE');
 
