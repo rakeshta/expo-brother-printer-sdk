@@ -79,6 +79,16 @@ class SettingsUtil private constructor() {
       }
     }
 
+    private fun _rotationFromValue(value: Int): PrintImageSettings.Rotation {
+      return when (value) {
+        0 -> PrintImageSettings.Rotation.Rotate0
+        1 -> PrintImageSettings.Rotation.Rotate90
+        2 -> PrintImageSettings.Rotation.Rotate180
+        3 -> PrintImageSettings.Rotation.Rotate270
+        else -> PrintImageSettings.Rotation.Rotate0 // Default value
+      }
+    }
+
     private fun _halftoneFromValue(value: Int): PrintImageSettings.Halftone {
       return when (value) {
         0 -> PrintImageSettings.Halftone.Threshold
@@ -100,42 +110,62 @@ class SettingsUtil private constructor() {
       settings.setWorkPath(workPath)
 
       // configure default settings
-      settings.autoCutForEachPageCount = 1
-      settings.isAutoCut = false
-      settings.isCutAtEnd = false
-      settings.resolution = PrintImageSettings.Resolution.Normal
-      settings.halftone = PrintImageSettings.Halftone.Threshold
-      settings.halftoneThreshold = 128
+      settings.autoCutForEachPageCount  = 1
+      settings.isAutoCut                = false
+      settings.isCutAtEnd               = false
+      settings.resolution               = PrintImageSettings.Resolution.Normal
+      settings.imageRotation            = PrintImageSettings.Rotation.Rotate0
+      settings.halftone                 = PrintImageSettings.Halftone.Threshold
+      settings.halftoneThreshold        = 128
 
       // parse settings from dictionary
       dictionary.forEach { (key, value) ->
         when (key) {
           "labelSize" -> {
-            if (value is Int) {
-              settings.labelSize = _labelSizeFromValue(value)
+            if (value is Double) {
+              Log.d("ExpoBrotherPrinterSdk", "-    Label Size: $value")
+              settings.labelSize = _labelSizeFromValue(value.toInt())
             }
           }
           "autoCutForEachPageCount" -> {
-            settings.autoCutForEachPageCount = if (value is Int) value else 1
+            if (value is Double) {
+              Log.d("ExpoBrotherPrinterSdk", "-    Auto Cut Page Count: $value")
+              settings.autoCutForEachPageCount = value.toInt()
+            }
           }
           "autoCut" -> {
-            settings.isAutoCut = if (value is Boolean) value else false
+            if (value is Boolean) {
+              Log.d("ExpoBrotherPrinterSdk", "-    Auto Cut: $value")
+              settings.isAutoCut = value
+            }
           }
           "cutAtEnd" -> {
-            settings.isCutAtEnd = if (value is Boolean) value else false
+            if (value is Boolean) {
+              Log.d("ExpoBrotherPrinterSdk", "-    Cut At End: $value")
+              settings.isCutAtEnd = value
+            }
           }
           "resolution" -> {
-            if (value is Int) {
-              settings.resolution = _resolutionFromValue(value)
+            if (value is Double) {
+              Log.d("ExpoBrotherPrinterSdk", "-    Resolution: $value")
+              settings.resolution = _resolutionFromValue(value.toInt())
+            }
+          }
+          "imageRotation" -> {
+            if (value is Double) {
+              Log.d("ExpoBrotherPrinterSdk", "-    Rotation: $value")
+              settings.imageRotation = _rotationFromValue(value.toInt())
             }
           }
           "halftone" -> {
             if (value is Double) {
+              Log.d("ExpoBrotherPrinterSdk", "-    Halftone: $value")
               settings.halftone = _halftoneFromValue(value.toInt())
             }
           }
           "halftoneThreshold" -> {
             if (value is Double) {
+              Log.d("ExpoBrotherPrinterSdk", "-    Halftone Threshold: $value")
               settings.halftoneThreshold = value.toInt()
             }
           }

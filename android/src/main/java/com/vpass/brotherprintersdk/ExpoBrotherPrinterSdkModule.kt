@@ -108,6 +108,7 @@ class ExpoBrotherPrinterSdkModule : Module() {
       Log.d("ExpoBrotherPrinterSdk", "-  Model Name: $modelName")
 
       // parse settings from dictionary
+      Log.d("ExpoBrotherPrinterSdk", "-  Settings: $settingsDict")
       val settings = SettingsUtil.settingsFromDictionary(
         settingsDict,
         modelName,
