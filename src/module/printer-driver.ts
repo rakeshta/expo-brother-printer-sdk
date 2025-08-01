@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 import { BPChannel, BPHalftone, BPPrintSettings } from '../types';
 import { NativeModule } from './native-module';
 
@@ -23,6 +25,19 @@ export const defaultPrintSettings: BPPrintSettings = {
  */
 export async function printImage(url: string, channel: BPChannel, settings?: BPPrintSettings): Promise<void> {
   await NativeModule.printImageWithURL(url, channel, { ...defaultPrintSettings, ...settings });
+}
+
+/**
+ * Request the serial number of the printer specified by the channel.
+ *
+ * @param channel The printer channel to use.
+ * @returns The serial number of the printer.
+ */
+export async function requestSerialNumber(channel: BPChannel): Promise<string> {
+  if (Platform.OS !== 'ios') {
+    return `--TODO on ${Platform.OS}--`;
+  }
+  return NativeModule.requestSerialNumber(channel);
 }
 
 /**

@@ -34,6 +34,7 @@ internal class SettingsUtils {
         settings.autoCut                 = reader.read("autoCut",                 nvl: false)
         settings.cutAtEnd                = reader.read("cutAtEnd",                nvl: false)
         settings.resolution              = reader.read("resolution",              nvl: .normal)            { BRLMPrintSettingsResolution(rawValue: $0) }
+        settings.imageRotation           = reader.read("imageRotation",           nvl: .rotate0)           { BRLMPrintSettingsRotation(rawValue: $0) }
         settings.halftone                = reader.read("halftone",                nvl: .threshold)         { BRLMPrintSettingsHalftone(rawValue: $0) }
         settings.halftoneThreshold       = reader.read("halftoneThreshold",       nvl: 128)
         

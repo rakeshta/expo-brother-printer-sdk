@@ -42,6 +42,13 @@ export interface BPPrintSettings {
   resolution?: BPResolution;
 
   /**
+   * The rotation of the image to print. The rotation direction is clockwise.
+   *
+   * @default BPRotation.Rotate0
+   */
+  imageRotation?: BPRotation;
+
+  /**
    * The halftone method to use.
    *
    * @default BPHalftone.PatternDither
@@ -96,6 +103,14 @@ export enum BPQLLabelSize {
   RoundW12DIA = 30,
   RoundW24DIA = 31,
   RoundW58DIA = 32,
+}
+
+/** Image rotation settings. */
+export enum BPRotation {
+  Rotate0 = 0,
+  Rotate90 = 1,
+  Rotate180 = 2,
+  Rotate270 = 3,
 }
 
 /** The print resolution. */

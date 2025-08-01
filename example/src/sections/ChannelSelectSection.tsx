@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-import { StyleProp, ViewStyle } from 'react-native';
+import { StyleProp, Text, ViewStyle } from 'react-native';
 
 import { BPChannel, BPChannelType } from 'expo-brother-printer-sdk';
 
@@ -31,25 +31,42 @@ export function ChannelSelectSection({ style, selectedChannel, onSelectChannel }
     }
   }, [channels, onSelectChannel, selectedChannel]);
 
+  // additional details about the selected channel
+  const [selectedChannelInfo, setSelectedChannelInfo] = useState<{ serialNumber: string } | undefined>(undefined);
+
+  useEffect(() => {
+    if (selectedChannel) {
+      setSelectedChannelInfo({
+        serialNumber: selectedChannel.serialNumber || 'N/A',
+      });
+    } else {
+      setSelectedChannelInfo(undefined);
+    }
+  }, [selectedChannel]);
+
   // render
   return (
     <Section style={style} contentStyle={GS.m_0} title='Select Printer'>
       {channels.length === 0 && (
         <Row text='No printers found' subText='Connect to a printer via Bluetooth settings, then restart the app.' />
       )}
-      {channels.map((channel) => (
-        <Row
-          key={channel.address}
-          text={
-            channel.alias && channel.alias !== channel.modelName ?
-              `${channel.modelName} (${channel.alias})`
-            : channel.modelName
-          }
-          subText={`${channel.address} (${ChannelDescription[channel.type]})`}
-          accessory={selectedChannel?.address === channel.address ? <CheckIcon /> : undefined}
-          onPress={() => onSelectChannel(channel)}
-        />
-      ))}
+      {channels.map((channel) => {
+        const isSelected = selectedChannel?.address === channel.address;
+        return (
+          <Row
+            key={channel.address}
+            text={
+              <>
+                {channel.modelName}
+                <Text style={[GS.color_text_secondary]}>{` (${channel.serialNumber})`}</Text>
+              </>
+            }
+            subText={`${channel.address} (${ChannelDescription[channel.type]})`}
+            accessory={isSelected ? <CheckIcon /> : undefined}
+            onPress={() => onSelectChannel(channel)}
+          />
+        );
+      })}
     </Section>
   );
 }

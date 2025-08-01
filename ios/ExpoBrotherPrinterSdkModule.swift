@@ -52,116 +52,75 @@ public class ExpoBrotherPrinterSdkModule: Module {
             return channels
         }
 
+        /// Get the serial number of the printer specified by the channel
+        AsyncFunction("requestSerialNumber") { (channelDict: [String: Any]) in
+            NSLog("Request serial number")
+            return try ChannelUtils.withPrinterDriver(channelDict) { (driver, _) in
+                NSLog("...Requesting serial number")
+                let serialNumber = driver.requestSerialNumber()
+                NSLog("-  Serial Number: \(serialNumber)")
+                return serialNumber
+            }
+        }
+
         /// Print image with URL
         AsyncFunction("printImageWithURL") { (urlString: String, channelDict: [String: Any], settingsDict: [String: Any]) in
             NSLog("Print image with URL")
 
-            // parse URL
+            // Parse URL
             guard let url = URL(string: urlString) else {
                 throw GenericError(description: "Invalid image URL")
             }
             NSLog("-  URL: \(url)")
 
-            // re-construct chanel
-            let channel = try ChannelUtils.channelFromDictionary(channelDict)
-            NSLog("-  Address: \(channel.channelInfo)")
+            // Connect & print image
+            try ChannelUtils.withPrinterDriver(channelDict) { (driver, modelName) in
 
-            // extract model name
-            // fallback to model name we got back from JS (for BLE printers, channels created from address do not have
-            // model info or other details.)
-            guard
-                let modelName = (channel.extraInfo?[BRLMChannelExtraInfoKeyModelName] ?? channelDict["modelName"]) as? String
-            else {
-                throw GenericError(description: "Model name could not be retrieved")
-            }
-            NSLog("-  Model Name: \(modelName)")
+                // Parse settings
+                let settings = try SettingsUtils.settingsFromDictionary(settingsDict, modelName: modelName)
+                NSLog("-  Settings: \(settingsDict)")
 
-            // parse settings
-            let settings = try SettingsUtils.settingsFromDictionary(settingsDict, modelName: modelName)
-            NSLog("-  Settings: \(settingsDict)")
-
-            // connect to printer
-            NSLog("...Connecting to \(modelName) at \(channel.channelInfo)")
-            let driverResult = BRLMPrinterDriverGenerator.open(channel)
-            guard
-                driverResult.error.code == .noError,
-                let driver = driverResult.driver
-            else {
-                throw GenericError(title: "Connection failed", description: driverResult.error.description())
-            }
-
-            // close connection before exit
-            defer {
-            NSLog("...Disconnecting")
-                driver.closeChannel()
-            }
-
-            // print image
-            NSLog("...Printing")
-            let error = driver.printImage(with: url, settings: settings)
-            if  error.code != BRLMPrintErrorCode.noError {
-                NSLog("Print failed - \(error)")
-                throw GenericError(title: "Print failed", description: "\(error.code) - \(error.description)")
+                // Print image
+                NSLog("...Printing")
+                let error = driver.printImage(with: url, settings: settings)
+                if error.code != BRLMPrintErrorCode.noError {
+                    NSLog("Print failed - \(error)")
+                    throw GenericError(title: "Print failed", description: "\(error.code) - \(error.description)")
+                }
             }
         }
 
-        // Print image with PDF
+        // Print PDF with URL
         AsyncFunction("printPDFWithURL") { (urlString: String, pages: [Int], channelDict: [String: Any], settingsDict: [String: Any]) in
             NSLog("Print PDF with URL")
 
-            // parse URL
+            // Parse URL
             guard let url = URL(string: urlString) else {
                 throw GenericError(description: "Invalid PDF URL")
             }
             NSLog("-  URL: \(url)")
 
-            // log pages
+            // Log pages
             if !pages.isEmpty {
                 NSLog("-  Pages: \(pages)")
             }
 
-            // re-construct chanel
-            let channel = try ChannelUtils.channelFromDictionary(channelDict)
-            NSLog("-  Address: \(channel.channelInfo)")
+            try ChannelUtils.withPrinterDriver(channelDict) { (driver, modelName) in
+                
+                // Parse settings
+                let settings = try SettingsUtils.settingsFromDictionary(settingsDict, modelName: modelName)
+                NSLog("-  Settings: \(settingsDict)")
 
-            // extract model name
-            // fallback to model name we got back from JS (for BLE printers, channels created from address do not have
-            // model info or other details.)
-            guard
-                let modelName = (channel.extraInfo?[BRLMChannelExtraInfoKeyModelName] ?? channelDict["modelName"]) as? String
-            else {
-                throw GenericError(description: "Model name could not be retrieved")
-            }
-            NSLog("-  Model Name: \(modelName)")
+                // Print PDF
+                NSLog("...Printing")
+                let error = pages.isEmpty
+                    ? driver.printPDF(with: url, settings: settings)
+                    : driver.printPDF(with: url, pages: pages.map { NSNumber(value: $0) }, settings: settings)
 
-            // parse settings
-            let settings = try SettingsUtils.settingsFromDictionary(settingsDict, modelName: modelName)
-            NSLog("-  Settings: \(settingsDict)")
-
-            // connect to printer
-            NSLog("...Connecting to \(modelName) at \(channel.channelInfo)")
-            let driverResult = BRLMPrinterDriverGenerator.open(channel)
-            guard
-                driverResult.error.code == .noError,
-                let driver = driverResult.driver
-            else {
-                throw GenericError(title: "Connection failed", description: driverResult.error.description())
-            }
-
-            // close connection before exit
-            defer {
-            NSLog("...Disconnecting")
-                driver.closeChannel()
-            }
-
-            // print pdf
-            NSLog("...Printing")
-            let error = pages.isEmpty
-                ? driver.printPDF(with: url, settings: settings)
-                : driver.printPDF(with: url, pages: pages.map { NSNumber(value: $0) }, settings: settings)
-            if  error.code != BRLMPrintErrorCode.noError {
-                NSLog("Print failed - \(error)")
-                throw GenericError(title: "Print failed", description: "\(error.code) - \(error.description)")
+                if error.code != BRLMPrintErrorCode.noError {
+                    NSLog("Print failed - \(error)")
+                    throw GenericError(title: "Print failed", description: "\(error.code) - \(error.description)")
+                }
             }
         }
     }

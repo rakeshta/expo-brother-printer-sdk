@@ -1,6 +1,6 @@
 {
   "name": "expo-brother-printer-sdk",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Expo module to connect to Brother printers",
   "main": "build/index.js",
   "module": "src/index",

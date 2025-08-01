@@ -5,7 +5,7 @@ import { StyleProp, ViewStyle } from 'react-native';
 import sortBy from 'lodash/sortBy';
 import startCase from 'lodash/startCase';
 
-import { BPHalftone, BPPrintSettings, BPQLLabelSize, BPResolution } from 'expo-brother-printer-sdk';
+import { BPHalftone, BPPrintSettings, BPQLLabelSize, BPResolution, BPRotation } from 'expo-brother-printer-sdk';
 
 import { Row, Section, ToggleRow } from '../components';
 import { ModalSelect, ModalSelectMethods } from '../modals';
@@ -21,6 +21,11 @@ function labelSizeToString(labelSize: BPQLLabelSize | undefined) {
 function resolutionToString(resolution: BPResolution | undefined) {
   if (resolution === undefined) return 'Not Set';
   return startCase(BPResolution[resolution]);
+}
+
+function rotationToString(rotation: BPRotation | undefined) {
+  if (rotation === undefined) return 'Not Set';
+  return startCase(BPRotation[rotation]);
 }
 
 function halftoneToString(halftone: BPHalftone | undefined) {
@@ -50,6 +55,17 @@ const resolutionItems = sortBy(
       label: resolutionToString(value),
     })),
   'label',
+);
+
+const rotationItems = sortBy(
+  Object.values(BPRotation)
+    .filter((value) => typeof value !== 'string')
+    .map((value) => ({
+      key: `${value}`,
+      value,
+      label: rotationToString(value),
+    })),
+  'value',
 );
 
 const halftoneItems = sortBy(
@@ -82,6 +98,7 @@ export function PrintSettingsSection({ style, settings, onChange }: PrintSetting
   // modal refs
   const labelSizeModalRef = useRef<ModalSelectMethods>(null);
   const resolutionModalRef = useRef<ModalSelectMethods>(null);
+  const rotationModalRef = useRef<ModalSelectMethods>(null);
   const halftoneModalRef = useRef<ModalSelectMethods>(null);
   const halftoneThresholdModalRef = useRef<ModalSelectMethods>(null);
 
@@ -106,6 +123,11 @@ export function PrintSettingsSection({ style, settings, onChange }: PrintSetting
           text='Resolution'
           detail={resolutionToString(settings.resolution)}
           onPress={() => resolutionModalRef.current?.present()}
+        />
+        <Row
+          text='Image Rotation'
+          detail={rotationToString(settings.imageRotation)}
+          onPress={() => rotationModalRef.current?.present()}
         />
         <Row
           text='Halftone'
@@ -135,6 +157,15 @@ export function PrintSettingsSection({ style, settings, onChange }: PrintSetting
         items={resolutionItems}
         selected={settings.resolution}
         onSelect={(value) => fireOnChange('resolution', value as BPResolution)}
+      />
+
+      {/* image rotation select */}
+      <ModalSelect
+        ref={rotationModalRef}
+        title='Image Rotation'
+        items={rotationItems}
+        selected={settings.imageRotation}
+        onSelect={(value) => fireOnChange('imageRotation', value as BPRotation)}
       />
 
       {/* halftone select */}
