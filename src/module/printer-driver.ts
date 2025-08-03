@@ -35,7 +35,7 @@ export async function printImage(url: string, channel: BPChannel, settings?: BPP
  */
 export async function requestSerialNumber(channel: BPChannel): Promise<string> {
   if (Platform.OS !== 'ios') {
-    return `--TODO on ${Platform.OS}--`;
+    return `--not supported on ${Platform.OS}--`;
   }
   return NativeModule.requestSerialNumber(channel);
 }

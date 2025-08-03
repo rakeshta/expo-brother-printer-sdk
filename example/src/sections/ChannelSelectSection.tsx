@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import { StyleProp, Text, ViewStyle } from 'react-native';
+import { Platform, StyleProp, Text, ViewStyle } from 'react-native';
 
-import { BPChannel, BPChannelType } from 'expo-brother-printer-sdk';
+import { BPChannel, BPChannelType, BrotherPrinterSDK } from 'expo-brother-printer-sdk';
 
 import { CheckIcon, Row, Section } from '../components';
 import { useSearchPrinters } from '../hooks';
@@ -35,13 +35,23 @@ export function ChannelSelectSection({ style, selectedChannel, onSelectChannel }
   const [selectedChannelInfo, setSelectedChannelInfo] = useState<{ serialNumber: string } | undefined>(undefined);
 
   useEffect(() => {
-    if (selectedChannel) {
-      setSelectedChannelInfo({
-        serialNumber: selectedChannel.serialNumber || 'N/A',
-      });
-    } else {
+    (async () => {
+      // clear previous info, when channel changes
       setSelectedChannelInfo(undefined);
-    }
+
+      // abort if no channel is selected or if on Android
+      // (serial number is not supported on Android)
+      if (!selectedChannel || Platform.OS !== 'ios') {
+        return;
+      }
+
+      // request printer details & save it
+      const serialNumber =
+        selectedChannel.serialNumber || (await BrotherPrinterSDK.requestSerialNumber(selectedChannel));
+      setSelectedChannelInfo({
+        serialNumber,
+      });
+    })();
   }, [selectedChannel]);
 
   // render
@@ -58,7 +68,9 @@ export function ChannelSelectSection({ style, selectedChannel, onSelectChannel }
             text={
               <>
                 {channel.modelName}
-                <Text style={[GS.color_text_secondary]}>{` (${channel.serialNumber})`}</Text>
+                {isSelected && selectedChannelInfo ?
+                  <Text style={[GS.color_text_secondary]}>{` (${selectedChannelInfo.serialNumber})`}</Text>
+                : null}
               </>
             }
             subText={`${channel.address} (${ChannelDescription[channel.type]})`}

@@ -81,6 +81,24 @@ class ExpoBrotherPrinterSdkModule : Module() {
       }
     }
 
+    /// Get the serial number of a printer specified by the channel
+    AsyncFunction("requestSerialNumber") { channelDict: Map<String, Any> ->
+      Log.i("ExpoBrotherPrinterSdk", "Request serial number")
+
+      // get context for creating channel
+      val context = appContext.reactContext ?: throw GenericError("React context is null")
+
+      // connect to printer & read serial number
+      return@AsyncFunction ChannelUtils.withPrinterDriver<String>(channelDict, context) { printerDriver, modelName ->
+        Log.d("ExpoBrotherPrinterSdk", "...Reading serial number")
+        val serialNumber = printerDriver.requestSerialNumber()
+        Log.d("ExpoBrotherPrinterSdk", "...Serial number: $serialNumber")
+
+        // serialNumber
+        "--VV00--"
+      }
+    }
+
     /// Print image with URL
     AsyncFunction("printImageWithURL") {
       urlString: String,
@@ -92,55 +110,30 @@ class ExpoBrotherPrinterSdkModule : Module() {
       val context = appContext.reactContext ?: throw GenericError("React context is null")
 
       // parse URI
-      var uri = URI(urlString)
+      val uri = URI(urlString)
       Log.d("ExpoBrotherPrinterSdk", "-  URL: ${uri.getPath()}")
-
-      // re-construct chanel
-      val channel = ChannelUtils.channelFromDictionary(channelDict, context)
-      Log.d("ExpoBrotherPrinterSdk", "-  Channel: $channel")
-      Log.d("ExpoBrotherPrinterSdk", "-     Address: ${channel.channelInfo}")
-      Log.d("ExpoBrotherPrinterSdk", "-     Model:   ${channel.extraInfo[Channel.ExtraInfoKey.ModelName]}")
-
-      // get model name from channel info or from channelDict
-      val modelName = (channel.extraInfo[Channel.ExtraInfoKey.ModelName]
-        ?: channelDict["modelName"] as? String)
-        ?: throw GenericError("Model name could not be retrieved")
-      Log.d("ExpoBrotherPrinterSdk", "-  Model Name: $modelName")
-
-      // parse settings from dictionary
       Log.d("ExpoBrotherPrinterSdk", "-  Settings: $settingsDict")
-      val settings = SettingsUtil.settingsFromDictionary(
-        settingsDict,
-        modelName,
-        context.applicationContext.filesDir.absolutePath
-      )
 
-      // connect to printer
-      Log.d("ExpoBrotherPrinterSdk", "Connecting to printer")
-      val result = PrinterDriverGenerator.openChannel(channel);
-      if (result.getError().getCode() != OpenChannelError.ErrorCode.NoError) {
-        Log.e("ExpoBrotherPrinterSdk", "Connection failed: ${result.getError()}")
-        throw GenericError("Connection failed: ${result.getError().getCode()}")
-      }
+      // Use the helper function to handle printer connection
+      ChannelUtils.withPrinterDriver(channelDict, context) { printerDriver, modelName ->
+        // Parse settings from dictionary
+        val settings = SettingsUtil.settingsFromDictionary(
+          settingsDict,
+          modelName,
+          context.applicationContext.filesDir.absolutePath
+        )
 
-      val printerDriver = result.getDriver();
-
-      try {
-        // print image
-        Log.d("ExpoBrotherPrinterSdk", "Printing image")
+        // Print image
+        Log.d("ExpoBrotherPrinterSdk", "...Printing")
         val printError = printerDriver.printImage(uri.getPath(), settings)
         if (printError.getCode() != PrintError.ErrorCode.NoError) {
           Log.e("ExpoBrotherPrinterSdk", "Print failed: ${printError.getErrorDescription()}")
           throw GenericError("Print failed: ${printError.getCode()}")
         }
-      } finally {
-        // ensure channel is closed
-        Log.d("ExpoBrotherPrinterSdk", "Disconnecting from printer")
-        printerDriver.closeChannel();
       }
     }
 
-    /// Print image with URL
+    /// Print PDF with URL
     AsyncFunction("printPDFWithURL") {
       urlString: String,
       pages: List<Int>,
@@ -158,50 +151,27 @@ class ExpoBrotherPrinterSdkModule : Module() {
       // log pages
       val pagesStr = if (pages.isEmpty()) "All" else pages.joinToString(", ")
       Log.d("ExpoBrotherPrinterSdk", "-  Pages: ${pagesStr}")
+      Log.d("ExpoBrotherPrinterSdk", "-  Settings: $settingsDict")
 
-      // re-construct chanel
-      val channel = ChannelUtils.channelFromDictionary(channelDict, context)
-      Log.d("ExpoBrotherPrinterSdk", "-  Channel: $channel")
-      Log.d("ExpoBrotherPrinterSdk", "-     Address: ${channel.channelInfo}")
-      Log.d("ExpoBrotherPrinterSdk", "-     Model:   ${channel.extraInfo[Channel.ExtraInfoKey.ModelName]}")
+      // Use the helper function to handle printer connection
+      ChannelUtils.withPrinterDriver(channelDict, context) { printerDriver, modelName ->
+        // Parse settings from dictionary
+        val settings = SettingsUtil.settingsFromDictionary(
+          settingsDict,
+          modelName,
+          context.applicationContext.filesDir.absolutePath
+        )
 
-      // get model name from channel info or from channelDict
-      val modelName = (channel.extraInfo[Channel.ExtraInfoKey.ModelName]
-        ?: channelDict["modelName"] as? String)
-        ?: throw GenericError("Model name could not be retrieved")
-      Log.d("ExpoBrotherPrinterSdk", "-  Model Name: $modelName")
-
-      // parse settings from dictionary
-      val settings = SettingsUtil.settingsFromDictionary(
-        settingsDict,
-        modelName,
-        context.applicationContext.filesDir.absolutePath
-      )
-
-      // connect to printer
-      Log.d("ExpoBrotherPrinterSdk", "...Connecting to ${modelName} at ${channel.channelInfo}")
-      val result = PrinterDriverGenerator.openChannel(channel);
-      if (result.getError().getCode() != OpenChannelError.ErrorCode.NoError) {
-        Log.e("ExpoBrotherPrinterSdk", "Connection failed: ${result.getError()}")
-        throw GenericError("Connection failed: ${result.getError().getCode()}")
-      }
-
-      val printerDriver = result.getDriver();
-
-      // print image
-      try {
+        // Print PDF
         Log.d("ExpoBrotherPrinterSdk", "...Printing")
         val printError = if (pages.isEmpty())
           printerDriver.printPDF(uri.getPath(), settings) else
           printerDriver.printPDF(uri.getPath(), pages.toIntArray(), settings)
+
         if (printError.getCode() != PrintError.ErrorCode.NoError) {
           Log.e("ExpoBrotherPrinterSdk", "Print failed: ${printError.getErrorDescription()}")
           throw GenericError("Print failed: ${printError.getCode()}")
         }
-      } finally {
-        // ensure channel is closed
-        Log.d("ExpoBrotherPrinterSdk", "...Disconnecting")
-        printerDriver.closeChannel();
       }
     }
   }
